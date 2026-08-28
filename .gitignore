@@ -1,0 +1,71 @@
+# Local Python environment and generated state
+.venv/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+work/
+
+# EMS data and large model assets (not licensed/distributed in this repository)
+EMS/
+feature_dict_RINet.npy
+model_parameters/
+*.npy
+*.pt
+*.pth
+*.zip
+
+# Local notebooks retain execution output; public sanitized copies live in notebooks/
+/notebookaaf7c6b835.ipynb
+/notebook_windows.ipynb
+
+# Kaggle result package: retain only aggregate reference configuration/metrics
+improve_behavioral_final_results/*
+!improve_behavioral_final_results/final_comparison_metrics.csv
+!improve_behavioral_final_results/best_fusion_foldwise_metrics.csv
+!improve_behavioral_final_results/best_fusion_alpha_by_fold.csv
+!improve_behavioral_final_results/feature_sets_clean.json
+
+# Generated outputs: publish aggregate review artifacts, never subject-level files
+outputs/*
+!outputs/category_experiments/
+outputs/category_experiments/*
+!outputs/category_experiments/summary/
+!outputs/category_experiments/summary/**
+
+!outputs/fixed_original_protocol/
+outputs/fixed_original_protocol/*
+!outputs/fixed_original_protocol/protocol.json
+!outputs/fixed_original_protocol/stimulus_category_mapping.csv
+!outputs/fixed_original_protocol/validation_report.json
+!outputs/fixed_original_protocol/summary/
+!outputs/fixed_original_protocol/summary/**
+
+!outputs/fixed_original_protocol/manipulated/
+outputs/fixed_original_protocol/manipulated/*
+!outputs/fixed_original_protocol/manipulated/category_summary.csv
+!outputs/fixed_original_protocol/manipulated/*_foldwise_metrics.csv
+!outputs/fixed_original_protocol/manipulated/feature_columns.json
+
+!outputs/fixed_original_protocol/natural/
+outputs/fixed_original_protocol/natural/*
+!outputs/fixed_original_protocol/natural/category_summary.csv
+!outputs/fixed_original_protocol/natural/*_foldwise_metrics.csv
+!outputs/fixed_original_protocol/natural/feature_columns.json
+
+!outputs/fixed_original_protocol/social/
+outputs/fixed_original_protocol/social/*
+!outputs/fixed_original_protocol/social/category_summary.csv
+!outputs/fixed_original_protocol/social/*_foldwise_metrics.csv
+!outputs/fixed_original_protocol/social/feature_columns.json
+
+!outputs/fixed_original_protocol/synthetic/
+outputs/fixed_original_protocol/synthetic/*
+!outputs/fixed_original_protocol/synthetic/category_summary.csv
+!outputs/fixed_original_protocol/synthetic/*_foldwise_metrics.csv
+!outputs/fixed_original_protocol/synthetic/feature_columns.json
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

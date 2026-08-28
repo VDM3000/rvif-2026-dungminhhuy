@@ -1,0 +1,2 @@
+stimulus_set,category,image_count,feature_set,classifier,alpha_msnet,behavior_weight,acc,sensitivity,specificity,precision,f1_score,auc,auc_std_across_folds,auc_range_across_folds
+Manipulated Images,manipulated,32,Pupil + Scanpath,HistGradientBoosting,0.8,0.2,0.79375,0.7735795454545455,0.8,0.7877508361204014,0.7774500070009291,0.9100315656565656,0.03921127346206729,0.08583333333333332

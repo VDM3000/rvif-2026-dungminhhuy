@@ -1,0 +1,3 @@
+[submodule "EMS_repo"]
+	path = EMS_repo
+	url = https://github.com/YingjieSong1/EMS.git

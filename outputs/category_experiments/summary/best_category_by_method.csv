@@ -1,0 +1,4 @@
+category,category_name,image_count,method,feature_set,model,alpha_msnet,behavior_weight,acc,sensitivity,specificity,auc,precision,f1_score
+manipulated,Manipulated Images,32,Category MSNet,RINet fixation features,MSNet trained from scratch,1.0,0.0,0.80625,0.8005681818181819,0.7999999999999999,0.8443955176767677,0.7966873706004141,0.7960181039048582
+social,Social Scenes,22,Category MSNet + Behavioral Fusion,pupil_scanpath,rf,0.275,0.7250000000000001,0.825,0.8724431818181819,0.7805555555555554,0.9252185921717172,0.7989203778677463,0.8291395243144978
+social,Social Scenes,22,Category behavior-only,pupil_scanpath,logreg,0.0,1.0,0.825,0.8329545454545455,0.8166666666666667,0.9061284722222224,0.8124741200828157,0.8213796087540708
