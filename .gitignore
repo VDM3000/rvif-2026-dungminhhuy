@@ -64,6 +64,32 @@ outputs/fixed_original_protocol/synthetic/*
 !outputs/fixed_original_protocol/synthetic/*_foldwise_metrics.csv
 !outputs/fixed_original_protocol/synthetic/feature_columns.json
 
+!outputs/balanced_stimulus_experiment/
+outputs/balanced_stimulus_experiment/*
+!outputs/balanced_stimulus_experiment/manifests/
+!outputs/balanced_stimulus_experiment/manifests/**
+!outputs/balanced_stimulus_experiment/protocol.json
+!outputs/balanced_stimulus_experiment/validation_report.json
+!outputs/balanced_stimulus_experiment/summary/
+outputs/balanced_stimulus_experiment/summary/*
+!outputs/balanced_stimulus_experiment/summary/aggregate_metrics.csv
+!outputs/balanced_stimulus_experiment/summary/experiment_summary.md
+!outputs/balanced_stimulus_experiment/summary/fold_metrics.csv
+!outputs/balanced_stimulus_experiment/summary/fusion_auc_by_fold.csv
+!outputs/balanced_stimulus_experiment/summary/metric_vs_stimulus_count.png
+
+!outputs/balanced_stimulus_experiment/results_20/
+outputs/balanced_stimulus_experiment/results_20/*
+!outputs/balanced_stimulus_experiment/results_20/feature_columns.json
+!outputs/balanced_stimulus_experiment/results_20/fold_metrics.csv
+!outputs/balanced_stimulus_experiment/results_40/
+outputs/balanced_stimulus_experiment/results_40/*
+!outputs/balanced_stimulus_experiment/results_40/feature_columns.json
+!outputs/balanced_stimulus_experiment/results_40/fold_metrics.csv
+!outputs/balanced_stimulus_experiment/results_60/
+outputs/balanced_stimulus_experiment/results_60/*
+!outputs/balanced_stimulus_experiment/results_60/feature_columns.json
+!outputs/balanced_stimulus_experiment/results_60/fold_metrics.csv
 # OS/editor noise
 .DS_Store
 Thumbs.db

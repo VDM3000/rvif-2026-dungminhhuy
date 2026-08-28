@@ -70,6 +70,9 @@ After authorized data/model assets are present, run the fixed experiment:
 ```
 
 For methodological details, see [`FIXED_PROTOCOL.md`](FIXED_PROTOCOL.md).
+The nested 20/40/60 category-balanced stimulus-count experiment is documented in
+[`BALANCED_STIMULUS_EXPERIMENT.md`](BALANCED_STIMULUS_EXPERIMENT.md), with aggregate
+results under `outputs/balanced_stimulus_experiment/summary`.
 
 ## Important distinction
 
