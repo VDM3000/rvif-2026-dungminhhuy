@@ -1,0 +1,98 @@
+Final improvement results manifest
+==================================
+
+OUT_DIR: C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral
+REPORT_DIR: C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs
+
+Important files:
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/final_comparison_metrics_rounded.csv | exists=True
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/behavior_only_metrics.csv | exists=True
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/fusion_metrics_nested_alpha.csv | exists=True
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/baseline_msnet_foldwise_metrics.csv | exists=True
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/best_behavior_foldwise_metrics.csv | exists=True
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/best_fusion_foldwise_metrics.csv | exists=True
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/best_fusion_alpha_by_fold.csv | exists=True
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs/ml_baseline_comparison_validation.csv | exists=True
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs/our_methods_comparison_validation.csv | exists=True
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs/ems_official_benchmark_plus_ours.csv | exists=True
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs/validation_vs_test_protocol_note.txt | exists=True
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs/confusion_matrix_msnet_validation.csv | exists=True
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs/confusion_matrix_msnet_validation.png | exists=True
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs/confusion_matrix_fusion_validation.csv | exists=True
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs/confusion_matrix_fusion_validation.png | exists=True
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs/validation_case_analysis_all.csv | exists=True
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs/validation_case_status_counts.csv | exists=True
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs/examples_corrected_by_fusion.csv | exists=True
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs/examples_corrected_by_fusion.png | exists=True
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs/examples_remaining_errors.csv | exists=True
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs/examples_remaining_errors.png | exists=True
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs/confusion_and_case_analysis_note.txt | exists=True
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs/alpha_grid_auc_curve.csv | exists=True
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs/alpha_grid_auc_curve.png | exists=True
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs/xai_selected_cases_lime_fusion_level.csv | exists=True
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs/lime_fusion_level_local_explanations.csv | exists=True
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/test_stim_behavior_features.csv | exists=True
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/test_subject_behavior_features.csv | exists=True
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/test_fusion_predictions_audit.csv | exists=True
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/prob_test.txt | exists=True
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs/ems_test_submission_metadata.txt | exists=True
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs/email_to_ems_author.txt | exists=True
+
+Missing important files:
+- None
+
+All report output files:
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\alpha_grid_auc_curve.csv | 3.87 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\alpha_grid_auc_curve.png | 101.24 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\alpha_nested_selection_explanation.csv | 0.27 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\confusion_and_case_analysis_note.txt | 0.68 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\confusion_matrix_fusion_validation.csv | 0.05 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\confusion_matrix_fusion_validation.png | 41.52 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\confusion_matrix_msnet_validation.csv | 0.05 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\confusion_matrix_msnet_validation.png | 40.12 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\data_completeness_note.txt | 0.83 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\email_to_ems_author.txt | 0.77 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\ems_official_benchmark_plus_ours.csv | 1.92 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\ems_test_submission_metadata.txt | 0.68 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\examples_corrected_by_fusion.csv | 0.92 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\examples_corrected_by_fusion.png | 79.03 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\examples_remaining_errors.csv | 0.87 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\examples_remaining_errors.png | 66.37 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\final_results_manifest.txt | 0.00 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\lime_fusion_level_fusion_correct_high_confidence_248.html | 1240.09 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\lime_fusion_level_fusion_correct_high_confidence_248.png | 119.26 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\lime_fusion_level_fusion_wrong_high_confidence_013.html | 1240.14 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\lime_fusion_level_fusion_wrong_high_confidence_013.png | 122.75 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\lime_fusion_level_local_explanations.csv | 24.92 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\lime_fusion_level_msnet_wrong_fusion_correct_021.html | 1240.17 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\lime_fusion_level_msnet_wrong_fusion_correct_021.png | 126.01 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\lime_fusion_level_subject_216_incomplete_records_216.html | 1240.07 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\lime_fusion_level_subject_216_incomplete_records_216.png | 115.14 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\ml_baseline_comparison_validation.csv | 0.50 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\our_methods_comparison_validation.csv | 0.90 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\processed_full_vs_incomplete.png | 59.89 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\processed_incomplete_subjects_barplot.png | 98.53 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\processed_min_valid_image_subjects.csv | 0.14 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\processed_subject_completeness_summary.csv | 0.25 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\processed_subjects_incomplete_images.csv | 0.60 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\umap_all_behavior_by_label_clean.png | 134.79 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\umap_all_behavior_embedding.csv | 11.52 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\umap_all_feature_groups_embedding_clean.csv | 80.39 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\umap_duration_only_by_label_clean.png | 135.60 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\umap_duration_only_embedding.csv | 11.38 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\umap_duration_pupil_by_label_clean.png | 135.70 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\umap_duration_pupil_embedding.csv | 11.92 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\umap_duration_scanpath_by_label_clean.png | 140.54 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\umap_duration_scanpath_embedding.csv | 12.26 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\umap_pupil_only_by_label_clean.png | 138.56 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\umap_pupil_only_embedding.csv | 11.04 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\umap_pupil_scanpath_by_fusion_correctness_clean.png | 136.93 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\umap_pupil_scanpath_by_label_clean.png | 141.46 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\umap_pupil_scanpath_embedding.csv | 11.85 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\umap_pupil_scanpath_with_fusion_correctness_clean.csv | 20.14 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\umap_scanpath_only_by_label_clean.png | 142.50 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\umap_scanpath_only_embedding.csv | 11.30 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\validation_case_analysis_all.csv | 31.82 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\validation_case_status_counts.csv | 0.10 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\validation_vs_test_protocol_note.txt | 0.67 KB
+- C:\Users\hweem\Documents\dav\rvif-2026-dungminhhuy\outputs\improve_behavioral/report_outputs\xai_selected_cases_lime_fusion_level.csv | 0.84 KB

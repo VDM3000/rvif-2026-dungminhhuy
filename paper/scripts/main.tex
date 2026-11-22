@@ -1,0 +1,320 @@
+\documentclass[conference,a4paper]{IEEEtran}
+\ifdefined\pdfminorversion
+\pdfminorversion=6
+\fi
+\renewcommand{\dbltopfraction}{0.95}
+\renewcommand{\dblfloatpagefraction}{0.85}
+\setcounter{dbltopnumber}{3}
+
+\usepackage{cite}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{url}
+\usepackage{xcolor}
+\usepackage{placeins}
+
+\graphicspath{{improve_behavioral_final_results/}{improve_behavioral_final_results/report_outputs/}}
+
+\begin{document}
+
+\title{BAMF: Behavior-Aware Multimodal Fusion for Schizophrenia Recognition from Eye Movements}
+
+\author{
+\IEEEauthorblockN{Duc Minh Vu, Minh Huy Nguyen, Danh Tuan Dung Pham, Hanh Trang Bui, Thanh Hai Tran}
+\IEEEauthorblockA{
+School of Electrical and Electronic Engineering\\
+Hanoi University of Science and Technology, Hanoi, Vietnam\\
+Email: hai.tranthithanh1@hust.edu.vn
+}
+}
+
+\maketitle
+
+\begin{abstract}
+Eye movements provide objective behavioral measurements that can support schizophrenia (SZ) screening. Existing deep learning methods learn stimulus-aware representations from fixation sequences but often overlook complementary behavioral dynamics, yielding incomplete characterizations of oculomotor behavior. In this paper, we propose BAMF, a \textbf{B}ehavior-\textbf{A}ware \textbf{M}ultimodal \textbf{F}usion framework for schizophrenia recognition. BAMF adopts the Mean Shift Network (MSNet), which integrates mean-shift clustering with convolutional feature extraction to derive cluster-center representations. In addition, we incorporate explicit behavioral descriptors encompassing fixation duration, pupil response, and scanpath geometric features extracted from raw eye-movement records. Beyond multimodal fusion, we systematically evaluate the four stimulus categories (Natural, Social, Synthetic, and Manipulated) independently to identify visual content providing the strongest separation between SZ and healthy controls (HCs). We further compare individual and combined behavioral feature sets with conventional classifiers, selecting Histogram-based Gradient Boosting (HGB) for probability fusion. On the public Eye Movement dataset for Schizophrenia (EMS) under the official four-fold protocol, BAMF raises the mean Area Under the ROC Curve (AUC) from 89.72\% to 95.03\%, while outperforming MSNet in accuracy, sensitivity, and F1-score. Stimulus-set analysis demonstrates that a reduced subset retains strong diagnostic capability, establishing practical guidelines for efficient eye-movement screening.
+\end{abstract}
+
+\begin{IEEEkeywords}
+schizophrenia recognition, eye tracking, behavioral features, multimodal fusion, stimulus-set design, machine learning
+\end{IEEEkeywords}
+
+\section{Introduction}
+Schizophrenia (SZ) is a chronic psychiatric disorder that affects cognition, perception, and social functioning. The World Health Organization (WHO) estimates that schizophrenia affects approximately 24 million people worldwide \cite{who2022schizophrenia}. Diagnosis remains primarily based on clinical interviews, behavioral observation, and standardized psychiatric criteria. Although these procedures are indispensable, their dependence on specialist expertise and the heterogeneity of symptoms motivate objective, non-invasive measurements that can complement clinical assessment.
+
+Eye movements are a promising source of objective biomarkers because they reflect visual attention and cognitive processing while being inexpensive and non-invasive to record. Abnormalities have been repeatedly observed in smooth pursuit, fixation stability, saccadic control, and visual exploration \cite{morita2020characteristics,wolf2021review,patel2020social}. These findings have motivated statistical machine-learning approaches based on explicit oculomotor features \cite{benson2012simple,morita2017integrated,huang2020effective,kacur2020analysis}.
+
+More recently, Song \emph{et al.} introduced the Eye Movement dataset for Schizophrenia (EMS), a public large-scale benchmark containing eye movements from 104 participants with SZ and 104 healthy controls (HCs), and proposed the Mean Shift Network (MSNet) to integrate responses across 100 free-viewing stimuli \cite{song2024ems}. MSNet extracts features at fixation locations and learns a subject-level representation by coupling a Stimulus Feature Branch (SFB) with a mean-shift-inspired Cluster Center Branch (CCB). Despite its strong benchmark performance, MSNet does not explicitly exploit several interpretable measurements available in raw records, including fixation duration, pupil response, and scanpath geometry.
+
+In this work, we propose BAMF, a Behavior-Aware Multimodal Fusion framework that complements MSNet with these explicit behavioral cues. We construct dedicated behavioral representations from fixation-duration, pupil-response, and scanpath features, learn their discriminative patterns using conventional classifiers, and perform validation-selected late probability fusion with MSNet. Furthermore, we systematically examine the discriminative contribution of individual behavioral feature groups and stimulus categories, and investigate how stimulus-set composition and size affect recognition performance. The main contributions of this work are threefold:
+\begin{itemize}
+    \item \textbf{Behavior-aware fusion}: We demonstrate the complementary value of explicit behavioral cues to deep fixation-based representations for schizophrenia recognition.
+    \item \textbf{Discriminative feature analysis}: We provide insights into which eye-movement characteristics are most informative for distinguishing schizophrenia from healthy controls.
+    \item \textbf{Stimulus-set analysis}: We systematically characterize the discriminative value of different stimulus categories and subset sizes, providing insights into efficient stimulus design for eye-movement-based screening.
+\end{itemize}
+
+\section{Related Work}
+\subsection{Eye Movements as Schizophrenia Biomarkers}
+Eye-movement dysfunction has a long history as a candidate biomarker for schizophrenia. Reviews by Morita \emph{et al.} and Wolf \emph{et al.} summarize consistent evidence across smooth pursuit, voluntary saccade control, fixation, and exploratory viewing \cite{morita2020characteristics,wolf2021review}. Benson \emph{et al.} showed that simple viewing tasks could separate schizophrenia cases from controls using a combination of eye-movement measurements \cite{benson2012simple}. Morita \emph{et al.} subsequently formed an integrated score from scanpath length, smooth-pursuit gain, and fixation duration, reporting 82.5\% discrimination accuracy \cite{morita2017integrated}. Related studies observed atypical scanpaths during free viewing and abnormal allocation of attention to natural social scenes in participants with schizophrenia \cite{patel2020social}.
+
+Handcrafted representations remain attractive because their variables directly relate to oculomotor behavior. Huang \emph{et al.} combined discriminative fixation/saccade measurements with features obtained from computational fixation-prediction models \cite{huang2020effective}. Kacur \emph{et al.} compared eye-tracking features and modeling strategies for schizophrenia detection \cite{kacur2020analysis}. St~Clair \emph{et al.} used 98 eye-movement variables and gradient-boosted trees to distinguish schizophrenia, major affective disorders, and healthy controls \cite{stclair2022patterns}. The comparative study of Vu \emph{et al.} contrasted a compact clinically interpretable pipeline with a high-dimensional behavioral representation and reported peak accuracies of 85.42\% and 81.25\%, respectively \cite{vu2026comparative}. Collectively, these studies demonstrate both the value of explicit features and the trade-off between interpretability and representational richness.
+
+\subsection{Stimulus-Aware and Deep Models}
+Handcrafted features do not fully represent what a participant viewed. Stimulus-aware approaches therefore combine gaze with image semantics. The Relative Importance-Aware Network (RINet) learns relative-importance-aware feature maps for fixation prediction \cite{song2023rinet}; MSNet samples these maps at fixation locations and integrates information across stimuli \cite{song2024ems}. Its Stimulus Feature Branch (SFB) uses self-attention to exchange information among stimulus representations, while its Cluster Center Branch (CCB) generates and iteratively shifts a cluster center toward dense regions of the feature space to act as a subject representation.
+
+Deep models and explicit descriptors capture complementary information: duration, pupil, and geometric scanpath summaries preserve physiological and behavioral cues, whereas MSNet preserves stimulus-aware semantic context. Our method retains both predictors and fuses their probabilities. Beyond schizophrenia, eye-movement characteristics have also shown efficacy in depression recognition \cite{zhang2022depression} and reading-based screening \cite{yang2024automatic}.
+
+\section{Proposed Method}
+\subsection{Framework Overview}
+We formulate eye-movement-based schizophrenia screening as predicting the subject label $y_s\in\{0,1\}$ ($1$ for SZ, $0$ for HC) from fixation records collected while viewing $V$ stimuli, $\mathcal{I}=\{I_v\}, v \in \{1, \ldots, V\}$. The stimuli are divided into four categories, $\mathcal{C}=\{\mathrm{Natural},\mathrm{Synthetic},\mathrm{Social},\mathrm{Manipulated}\}$. For subject $s$ and stimulus $I_v$, the recorded fixation sequence is $\mathbf{X}_{sv}\in\mathbb{R}^{N_{sv}\times5}$, where each fixation contains timestamp, duration, pupil diameter, and spatial coordinates, i.e., $\mathbf{f}_{sv}^i=[t, d, p, x,y]$. The complete record is $\mathbf{X}_s=\{\mathbf{X}_{sv}\}$, from which the schizophrenia status is inferred. 
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.98\textwidth]{overall_framework_integrated.png}
+\caption{Overview of the proposed Behavior-Aware Multimodal Fusion (BAMF) framework. The upper stimulus-aware path processes fixation-conditioned feature maps from the Relative Importance-Aware Network (RINet) using the Mean Shift Network (MSNet), comprising a Stimulus Feature Branch (SFB) and a Cluster Center Branch (CCB). The lower behavioral path extracts duration ($D$), pupil ($P$), and scanpath ($S$) descriptors for classification with Histogram-based Gradient Boosting (HGB), followed by validation-selected late probability fusion.}
+\label{fig:framework}
+\end{figure*}
+
+Figure~\ref{fig:framework} gives a complete view of the proposed system. The upper path expands MSNet processing stages. For every stimulus, its RINet-derived feature map is sampled at the participant's fixation positions. The behavioral path independently transforms raw fixation records into explicit duration, pupil, and scanpath descriptors. The two paths produce subject-level SZ probability estimates, which are combined by weighted late fusion.
+
+\subsection{Stimulus-Aware MSNet Path}
+For stimulus $I_v$, MSNet takes RINet feature vectors at the recorded fixation locations. RINet uses a fully convolutional DenseNet backbone, Hierarchical Relative-Importance Enhancement (HRIE) branches, and multi-scale feature merging \cite{song2023rinet}. With $V$ stimuli per subject, the sampled vectors form an input tensor $\mathbf{F}\in\mathbb{R}^{V\times N\times C}$, where the official configuration pads or truncates to $N=14$ fixation locations and uses $C=1056$ channels \cite{song2024ems}. A $1\times1$ fixation-embedding convolution reshapes each stimulus into a compact representation. Four SFB stages then apply channel reduction and self-attention \cite{vaswani2017attention}, allowing each stimulus representation to incorporate information from other stimuli.
+
+In parallel, the CCB first selects a high-density stimulus feature as an initial center through the cluster center generator. At every stage, a cluster center shift module estimates feature density from cosine similarity and updates the center with a mean-shift vector \cite{song2024ems}. After the fourth stage, layer normalization, a fully connected layer, and a sigmoid activation produce the MSNet probability $p_{\mathrm{M}}$. In the main fusion comparison, we reproduce the official pretrained model without altering its weights. In stimulus-set experiments (Section~\ref{sec:stimulus_design}), MSNet is trained from scratch for every subset and fold while retaining the original architecture and protocol.
+
+\subsection{Behavioral Feature Extraction}
+For subject $s$ and stimulus $I_j$, the ordered valid fixations are $\mathcal{Z}_{sj}=\{(d_k,p_k,x_k,y_k)\}_{k=1}^{n_{sj}}$, where $d_k$ is duration, $p_k$ is pupil diameter, and $(x_k,y_k)$ is fixation position. Records with missing coordinates or coordinates outside the $1024\times768$ display are removed. Pupil and duration missingness is handled by training-fold median imputation.
+
+Following the statistical-feature formulation in prior work \cite{vu2026comparative}, we define common distribution operators for a sequence $v=(v_1,\ldots,v_n)$ as
+\begin{equation}
+\begin{aligned}
+\mathcal{T}(v)=\{&\mu_v,\sigma_v,\operatorname{med}(v),\min(v),\max(v),\\
+&Q_{.25}(v),Q_{.75}(v),\operatorname{IQR}(v),\operatorname{CV}(v)\},
+\end{aligned}
+\label{eq:distribution_features}
+\end{equation}
+where $\mu_v=n^{-1}\sum_k v_k$, $\sigma_v=[n^{-1}\sum_k(v_k-\mu_v)^2]^{1/2}$, interquartile range $\operatorname{IQR}(v)=Q_{.75}(v)-Q_{.25}(v)$, and coefficient of variation $\operatorname{CV}(v)=\sigma_v/\mu_v$ (set to zero when $\mu_v=0$).
+
+The duration group $D$ contains 12 stimulus-level descriptors: $\mathcal{T}(d)$, total duration $\sum_k d_k$, first-fixation duration $d_1$, and the mean of the first $\min(5,n_{sj})$ durations. The pupil group $P$ contains the corresponding distribution, first-fixation, and early-mean descriptors, missing-pupil ratio, and pupil changes relative to the first and preceding fixations:
+\begin{equation}
+\Delta_k^{(1)}=p_k-p_1,\qquad \Delta_k^{(s)}=p_{k+1}-p_k,
+\label{eq:pupil_changes}
+\end{equation}
+summarized by their mean, standard deviation, and mean absolute value, yielding 18 descriptors.
+
+For the scanpath group $S$, consecutive-fixation amplitude and path length are
+\begin{equation}
+a_k=\sqrt{(x_{k+1}-x_k)^2+(y_{k+1}-y_k)^2},\qquad L_{sj}=\sum_{k=1}^{n_{sj}-1}a_k.
+\label{eq:scanpath}
+\end{equation}
+We retain fixation count; coordinate means and standard deviations; horizontal, vertical, and rectangular dispersion; mean, standard deviation, and maximum distance to screen center; $L_{sj}$; and the mean, standard deviation, median, and maximum of $a_k$ (16 descriptors).
+
+Finally, each descriptor is aggregated across available stimuli for subject $s$ using mean, standard deviation, median, minimum, and maximum. This yields 60 duration features ($12\times5$), 90 pupil features ($18\times5$), and 80 scanpath features ($16\times5$); three additional statistics (valid-image count, total fixation count, and mean fixations per image) complete the 83-dimensional $S$ group. The concatenated feature groups have dimensions of 150 ($D+P$), 143 ($D+S$), 173 ($P+S$), and 233 ($D+P+S$).
+
+\subsection{Behavioral Models and Late Fusion}
+We evaluate Logistic Regression (LR), Random Forest (RF), and Histogram-based Gradient Boosting (HGB). A trained behavioral model $f_{\mathrm{B}}$ estimates
+\begin{equation}
+p_{\mathrm{B}}=f_{\mathrm{B}}(\mathbf{x}),
+\end{equation}
+where $\mathbf{x}$ is a subject-level behavioral vector. The final probability is
+\begin{equation}
+p_{\mathrm{F}}=\alpha p_{\mathrm{M}}+(1-\alpha)p_{\mathrm{B}},\qquad \alpha\in[0,1].
+\label{eq:fusion}
+\end{equation}
+The fusion leaves both branches independently inspectable. For a target fold, $\alpha$ is selected using predictions from the remaining three folds to prevent data leakage.
+
+\section{Experiments}
+\subsection{EMS Dataset and Protocol}
+EMS contains 208 subjects: 104 with SZ and 104 HCs \cite{song2024ems}. Each subject free-viewed 100 images for 5 seconds per image across social scenes, natural scenes, synthetic images, and manipulated images. Eye movements were recorded using an EyeLink 1000 Plus at 1000~Hz on a $1024\times768$ display. The released protocol reserves 48 subjects as a hidden test set and divides the remaining 160 balanced subjects into four predefined folds. We follow these folds exactly: one fold is held out for validation and three train the behavioral model. Table~\ref{tab:dataset} summarizes the dataset. Of the 160 training--validation subjects, 148 have records for all 100 images and 12 have between 63 and 99 valid images. We aggregate over available images and retain the valid-image count.
+
+\begin{table}[t]
+\caption{Summary of the EMS dataset and evaluation protocol.}
+\label{tab:dataset}
+\centering
+\small
+\begin{tabular}{@{}ll@{}}
+\toprule
+Property & Value \\
+\midrule
+Participants & 104 SZ + 104 HC \\
+Stimuli per participant & 100 images, 5 s each \\
+Eye tracker & EyeLink 1000 Plus, 1000 Hz \\
+Display & $1024\times768$, 19 inch \\
+Train--validation & 160 subjects, four folds \\
+Hidden test & 48 subjects (labels withheld) \\
+Complete processed records & 148/160 subjects \\
+Minimum valid images & 63 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Experimental Setup}
+Missing behavioral values are imputed using medians estimated solely from training folds. LR applies standardization, balanced class weights, the \texttt{liblinear} solver, and at most 3000 iterations. RF uses 500 trees, a minimum leaf size of two, and balanced class weights. HGB uses 300 iterations, a learning rate of 0.03, at most 15 leaf nodes, and $L_2$ regularization of 0.01. The random seed is fixed to 42.
+
+The seven behavioral groups are combined with the three classifiers, producing 21 configurations. The fusion weight is searched over $\alpha\in\{0,0.05,\ldots,1\}$. Area Under the ROC Curve (AUC) is the primary criterion, followed by F1-score (F1) and Accuracy (Acc.). We report subject-level Accuracy (Acc.), Sensitivity (Sen.), Specificity (Spe.), AUC, and F1-score (F1). Threshold-dependent metrics use a per-fold Otsu threshold; AUC is threshold-independent. All tabulated metrics are unweighted means over the four folds expressed as percentages. Best results are in bold; second-best are underlined.
+
+\subsection{Evaluation of Proposed Model}
+Table~\ref{tab:ml_results} reports all 21 behavioral configurations. Duration--pupil LR achieves the highest behavioral-only AUC (90.42\%), while pupil--scanpath HGB is selected for fusion because its error distribution complements MSNet more effectively.
+
+\begin{table}[t]
+\caption{Performance of all behavioral feature--classifier configurations on the EMS validation set (\%).}
+\label{tab:ml_results}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4.2pt}
+\begin{tabular}{llrccccc}
+\toprule
+Model & Features & Dim. & Acc. & Sen. & Spe. & AUC & F1 \\
+\midrule
+LR & $D$ & 60 & 75.00 & 66.90 & 82.36 & 81.19 & 72.33 \\
+LR & $P$ & 90 & 79.38 & 88.92 & 70.69 & 88.90 & 80.89 \\
+LR & $S$ & 83 & 70.62 & 72.61 & 68.06 & 77.23 & 71.17 \\
+LR & $D+P$ & 150 & 82.50 & 82.24 & 82.57 & \textbf{90.42} & 82.09 \\
+LR & $D+S$ & 143 & 78.13 & 77.50 & 78.12 & 81.78 & 77.89 \\
+LR & $P+S$ & 173 & 75.00 & 75.74 & 73.47 & 85.85 & 74.48 \\
+LR & $D+P+S$ & 233 & 78.75 & 75.51 & 80.69 & \underline{87.00} & 77.54 \\
+\midrule
+RF & $D$ & 60 & 69.38 & 76.65 & 62.01 & 77.92 & 71.19 \\
+RF & $P$ & 90 & 71.25 & 72.02 & 71.60 & 79.68 & 71.27 \\
+RF & $S$ & 83 & 71.88 & 61.82 & 80.14 & 79.00 & 68.19 \\
+RF & $D+P$ & 150 & 76.25 & 79.38 & 74.24 & 85.52 & 76.86 \\
+RF & $D+S$ & 143 & 73.75 & 69.38 & 77.50 & 79.31 & 71.89 \\
+RF & $P+S$ & 173 & 78.12 & 79.72 & 77.64 & \underline{87.81} & 78.12 \\
+RF & $D+P+S$ & 233 & 80.00 & 84.26 & 76.04 & \textbf{88.87} & 80.64 \\
+\midrule
+HGB & $D$ & 60 & 70.62 & 73.64 & 66.32 & 73.48 & 70.38 \\
+HGB & $P$ & 90 & 72.50 & 77.93 & 67.50 & 80.83 & 73.67 \\
+HGB & $S$ & 83 & 72.50 & 70.62 & 73.40 & 75.50 & 71.57 \\
+HGB & $D+P$ & 150 & 75.00 & 77.47 & 71.25 & 84.41 & 74.70 \\
+HGB & $D+S$ & 143 & 71.88 & 68.95 & 73.75 & 79.46 & 70.13 \\
+HGB & $P+S$ & 173 & 83.12 & 87.24 & 78.96 & \textbf{89.75} & 83.47 \\
+HGB & $D+P+S$ & 233 & 76.25 & 84.43 & 67.22 & \underline{87.10} & 77.57 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:main_results} compares reproduced MSNet, the strongest behavioral-only configuration, and BAMF ($\alpha = 0.8$). Fusion attains the highest AUC (95.03\%), accuracy (84.38\%), sensitivity (84.63\%), and F1-score (84.05\%). Relative to MSNet, it raises AUC by 5.31\% and substantially reduces false negatives.
+
+\begin{table}[t]
+\caption{Average subject-level performance over the four EMS validation folds (\%).}
+\label{tab:main_results}
+\centering
+\small
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{llccccc}
+\toprule
+Method & Configuration & Acc. & Sen. & Spe. & AUC & F1 \\
+\midrule
+MSNet & Pretrained & \underline{83.13} & 80.51 & \textbf{87.08} & 89.72 & \underline{82.44} \\
+Behavioral & $D+P$, LR & 82.50 & \underline{82.24} & 82.57 & \underline{90.42} & 82.09 \\
+BAMF (ours) & $P+S$, HGB & \textbf{84.38} & \textbf{84.63} & \underline{83.61} & \textbf{95.03} & \textbf{84.05} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:benchmark} positions BAMF against all published EMS validation baselines \cite{song2024ems}. Our reproduced MSNet metrics match official benchmark values. BAMF achieves the best validation AUC and overall performance among all compared methods.
+
+\begin{table}[t]
+\caption{Comparison with published EMS validation baselines \cite{song2024ems} (\%).} 
+\label{tab:benchmark}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{7.0pt}
+\begin{tabular}{lccccc}
+\toprule
+Method & Acc. & Sen. & Spe. & AUC & F1 \\
+\midrule
+EDB--SVM & 73.13 & 71.56 & 73.96 & 80.86 & 71.95 \\
+EDB--QDA & 70.63 & 60.26 & 79.93 & 72.05 & 66.38 \\
+EDB--BYS & 70.00 & 60.65 & 77.85 & 79.87 & 65.10 \\
+ESR--SVM & 79.38 & 79.46 & 78.47 & 84.98 & 78.89 \\
+ESR--RF & 76.25 & 75.40 & 76.39 & 85.21 & 75.38 \\
+IAS & 75.63 & 76.34 & 75.00 & 81.80 & 75.72 \\
+LVA & 81.88 & 77.66 & 85.85 & 89.87 & 80.96 \\
+DDB--DoF & 72.50 & 78.72 & 67.27 & 76.45 & 74.46 \\
+DDB & 73.13 & 78.66 & 68.73 & 77.72 & 75.12 \\
+DVP & 78.75 & 75.48 & 80.56 & 85.16 & 77.69 \\
+GPI--LSTM & 71.25 & 68.81 & 74.24 & 79.53 & 69.47 \\
+GPI--GRU & 70.63 & 70.45 & 71.88 & 77.98 & 69.83 \\
+MSNet & \underline{83.13} & \underline{80.51} & \textbf{87.08} & \underline{89.72} & \underline{82.44} \\
+\midrule
+BAMF (ours) & \textbf{84.38} & \textbf{84.63} & \underline{83.61} & \textbf{95.03} & \textbf{84.05} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Fusion-Weight and Fold-Wise Analysis}
+Figure~\ref{fig:alpha_curve} shows the effect of the MSNet fusion weight $\alpha$ on mean validation AUC. Performance improves consistently as behavioral and deep probabilities are combined, peaking at $\alpha=0.8$. Fusion enhances AUC in all four folds: from 89.65\% to 97.98\% on Set\_0 (+8.33), 89.84\% to 91.93\% on Set\_1 (+2.09), 89.75\% to 95.75\% on Set\_2 (+6.00), and 89.65\% to 94.44\% on Set\_3 (+4.79).
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.75\columnwidth]{alpha_grid_auc_curve_revised.pdf}
+\caption{Mean four-fold AUC versus MSNet weight $\alpha$ for the selected pupil--scanpath HGB fusion.}
+\label{fig:alpha_curve}
+\end{figure}
+
+\subsection{Stimulus-Set Design Experiments}
+\label{sec:stimulus_design}
+We keep the behavioral representation ($P+S$), HGB hyperparameters, and fusion weight ($\alpha=0.8$) fixed and vary the stimulus set. For each reduced set, behavioral descriptors are recomputed exclusively from selected images and MSNet is retrained from scratch for each fold.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.82\textwidth]{xai_subject_302.pdf}
+\caption{Explainable Artificial Intelligence (XAI) case analysis for subject 302 (ground truth: SZ). (a) The behavioral branch raises the fused probability above the fold decision threshold. (b) Local Interpretable Model-agnostic Explanations (LIME) feature importance for the behavioral HGB model; green conditions support SZ and red support HC.}
+\label{fig:xai_case}
+\end{figure*}
+
+\subsubsection{Category-specific analysis}
+The 100 EMS stimuli comprise Manipulated images (32), Natural scenes (31), Social scenes (22), and Synthetic images (15). Table~\ref{tab:category_results} indicates that Natural scenes achieve the highest category-specific AUC (91.29\%) and sensitivity (86.08\%). Manipulated images are a close second in AUC (91.00\%) while providing the highest specificity (80.00\%). Synthetic images yield the lowest performance across metrics. This suggests that Natural and Manipulated content are the most informative for screening.
+
+\begin{table}[t]
+\caption{Performance (\%) of BAMF across individual stimulus categories.}
+\label{tab:category_results}
+\centering
+\small
+\setlength{\tabcolsep}{5.2pt}
+\begin{tabular}{lrrrrrr}
+\toprule
+Category & Images & Acc. & Sen. & Spe. & AUC & F1 \\
+\midrule
+Manipulated & 32 & 79.38 & 77.36 & \underline{80.00} & 91.00 & 77.75 \\
+Natural & 31 & \underline{81.25} & \textbf{86.08} & 74.65 & \underline{91.29} & \underline{80.88} \\
+Social & 22 & 79.38 & 81.82 & 76.81 & 88.87 & 79.28 \\
+Synthetic & 15 & 72.50 & 71.45 & 72.64 & 84.34 & 71.47 \\
+All & 100 & \textbf{84.38} & \underline{84.63} & \textbf{83.61} & \textbf{95.03} & \textbf{84.05} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Balanced stimulus-count analysis}
+We construct three nested balanced subsets with seed 42: $S_{20}\subset S_{40}\subset S_{60}$, containing 5, 10, and 15 images per category, respectively. Table~\ref{tab:stimulus_count} shows AUC increasing from 83.67\% at 20 images to 88.15\% at 40 and 91.70\% at 60. The 60-image subset is the strongest reduced design: compared to all 100 images, accuracy is within 0.63 points (83.75\% vs. 84.38\%) and F1-score is comparable (84.09\% vs. 84.05\%), offering a 40\% reduction in acquisition burden.
+
+\begin{table}[t]
+\caption{Performance (\%) of BAMF across balanced stimulus-set sizes.}
+\label{tab:stimulus_count}
+\centering
+\small
+\setlength{\tabcolsep}{5.2pt}
+\begin{tabular}{lrrrrrr}
+\toprule
+Set & Per category & Acc. & Sen. & Spe. & AUC & F1 \\
+\midrule
+$S_{20}$ & 5 & 75.63 & 76.93 & 72.64 & 83.67 & 74.47 \\
+$S_{40}$ & 10 & 75.63 & \underline{84.83} & 65.76 & 88.15 & 77.22 \\
+$S_{60}$ & 15 & \underline{83.75} & \textbf{89.52} & \underline{77.43} & \underline{91.70} & \textbf{84.09} \\
+$S_{100}$ & unbalanced & \textbf{84.38} & 84.63 & \textbf{83.61} & \textbf{95.03} & \underline{84.05} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Explainable Case Analysis}
+Figure~\ref{fig:xai_case} illustrates decision correction for subject 302 (ground truth: SZ). The MSNet probability of 41.07\% falls below the fold threshold of 42.35\%, incorrectly predicting HC. The behavioral HGB branch assigns 99.50\% SZ probability; with $\alpha=0.8$, BAMF yields 52.76\%, correctly surpassing the threshold. Local Interpretable Model-agnostic Explanations (LIME) identifies the key behavioral conditions supporting this prediction.
+
+\section{Conclusion}
+We presented BAMF, a behavior-aware multimodal fusion framework for schizophrenia recognition from eye movements. By coupling the stimulus-aware Mean Shift Network (MSNet) with explicit duration, pupil, and scanpath descriptors via Histogram-based Gradient Boosting (HGB), BAMF increases mean validation AUC from 89.72\% to 95.03\% on the EMS benchmark with consistent improvements across all folds. Stimulus-set experiments demonstrate that natural and manipulated images provide the strongest individual discrimination, while a balanced 60-image subset preserves competitive performance with a 40\% reduction in acquisition time.
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}

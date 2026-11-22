@@ -1,0 +1,30 @@
+{
+  "created_at": "2026-11-22T19:25:31.807305+07:00",
+  "purpose": "frozen historical seed-42 four-fold reproduction",
+  "subjects": 160,
+  "fold_sizes": {
+    "Set_0": 40,
+    "Set_1": 40,
+    "Set_2": 40,
+    "Set_3": 40
+  },
+  "main_repo_commit": "1ad1ac93d1f924fcd12c5cd6b0bd3816575f16d5",
+  "ems_commit": "966eef1669623db16f69aabc1db8b22299459b00",
+  "python": "3.12.10",
+  "numpy": "1.26.4",
+  "pandas": "2.2.3",
+  "sklearn": "1.5.2",
+  "torch": "2.7.0+cu128",
+  "input_sha256": {
+    "rvif-2026-dungminhhuy\\notebooks\\windows.ipynb": "08b541fcbff152b479d803a2983c3fcc923f6141cb10bda6fb2a8144b0cdebd7",
+    "rvif-2026-dungminhhuy\\feature_dict_RINet.npy": "f2cb83ac4f993d91c3c5ce210256941b5987f381f8c7df1fe58930779e48cde8",
+    "rvif-2026-dungminhhuy\\EMS\\Train_Valid.xlsx": "d9e0e6772b4b445543b51cfa380b4cd8d9c3826235b96ae1827ae4ba7b44aad8",
+    "2026_RVIF_HuyMinhDung_Final\\main.tex": "9465875cb1cc42527fefe2525ca0890c6097e8e85d98dd66c295bb8ae471c67c",
+    "rvif-2026-dungminhhuy\\model_parameters\\Set_0\\best_model.pt": "04993639346578acac96009dd2aa2db67131dd5ca4a16046a613534ac0bbba62",
+    "rvif-2026-dungminhhuy\\model_parameters\\Set_1\\best_model.pt": "27dc75e500844240fd6e4ed9cc38f2875412d0afe4816d5448d14e21125af9c8",
+    "rvif-2026-dungminhhuy\\model_parameters\\Set_2\\best_model.pt": "a7460aed8d14b0bd15a81fee0b32c170edd32a404af9a628231b9823dfd20863",
+    "rvif-2026-dungminhhuy\\model_parameters\\Set_3\\best_model.pt": "99dbb637401696dfdb9ba61af854b366c5729b1b772294f2026d139f1baf6864"
+  },
+  "source_outputs": "C:\\Users\\hweem\\Documents\\dav\\rvif-2026-dungminhhuy\\outputs\\improve_behavioral",
+  "note": "Source run was saved in notebooks/windows.ipynb; source worktree is dirty and not claimed as a clean commit."
+}

@@ -1,0 +1,20 @@
+EMS evaluation protocol note
+============================
+
+Official EMS protocol:
+- 160 subjects: 4-fold cross-validation -> reported as Validation Set.
+- 48 subjects: held-out Test Set, whose labels are not used locally.
+
+Official MSNet:
+- Validation Specificity = 0.8708 (87.08%)
+- Test Specificity       = 0.7917 (79.17%)
+
+Our reproduced MSNet validation:
+- Specificity = 0.8708
+
+Our proposed fusion validation:
+- Specificity = 0.8361
+- AUC         = 0.9503
+
+Therefore, the ~87% MSNet Specificity is a VALIDATION result, not a held-out TEST result.
+Do not compare our validation value with the original test value as if they were measured on the same split.

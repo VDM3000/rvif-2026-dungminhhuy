@@ -1,6 +1,6 @@
 # Bản đồ thư mục và file của dự án
 
-Phạm vi: `dav/rvif-2026-dungminhhuy/`. Bản đồ này được đối chiếu với file thực có ngày 2026-11-22. Thư mục bản thảo `dav/2026_RVIF_HuyMinhDung_Final/` nằm ngoài phạm vi sắp xếp. Các file dữ liệu cùng mẫu tên được giải thích theo nhóm; xem `EMS/README.txt` để biết định nghĩa từng bản ghi. `bamf.zip` không tồn tại và không thuộc cấu trúc hiện tại.
+Phạm vi: `dav/rvif-2026-dungminhhuy/`. Bản đồ này được đối chiếu với file thực có ngày 2026-11-22. `paper/` là bản sao bản thảo cùng PDF kiểm tra để nhóm đọc từ GitHub; bản gốc làm việc ở `dav/2026_RVIF_HuyMinhDung_Final/`. Các file dữ liệu cùng mẫu tên được giải thích theo nhóm; xem `EMS/README.txt` để biết định nghĩa từng bản ghi. `bamf.zip` không tồn tại và không thuộc cấu trúc hiện tại.
 
 ## Root `dav/`
 
@@ -14,7 +14,7 @@ Phạm vi: `dav/rvif-2026-dungminhhuy/`. Bản đồ này được đối chiế
 | File/thư mục | Ý nghĩa |
 |---|---|
 | `.git/` | Lịch sử Git và trạng thái phiên bản. |
-| `.gitignore` | Loại dữ liệu EMS, file model lớn, môi trường và output nhạy cảm khỏi Git. |
+| `.gitignore` | Loại dữ liệu EMS gốc, đặc trưng RINet 11 GB, môi trường và cache; đưa kết quả chạy phục vụ review vào Git. |
 | `.gitattributes` | Quy tắc xử lý file của Git. |
 | `.gitmodules` | Ghim repo EMS gốc làm submodule `EMS_repo/`. |
 | `README.md` | Giới thiệu thí nghiệm và lệnh chạy. |
@@ -22,6 +22,9 @@ Phạm vi: `dav/rvif-2026-dungminhhuy/`. Bản đồ này được đối chiế
 | `FILE_MAP.md` | Bản đồ này. |
 | `spec.md` | Đặc tả bốn thí nghiệm mới theo góp ý GVHD và giới hạn phương pháp. |
 | `EXPERIMENT_CHECKPOINTS.md` | Tiến độ, quyết định và bàn giao cho bốn thí nghiệm trong `spec.md`. |
+| `paper/` | Snapshot `main.tex`, tài liệu và hình nguồn, cùng `main.pdf` đã biên dịch để nhóm review. |
+| `outputs/reviewer_experiments/` | Baseline, ba seed, α, Late/Early Fusion 2/1/1, dự đoán theo người, checkpoint và bảng tổng hợp. |
+| `outputs/improve_behavioral/` | Kết quả notebook lịch sử, bao gồm dự đoán theo người và các bảng/phân tích hành vi. |
 | `requirements-windows.txt` | Gói Python bổ sung cho môi trường Windows. |
 | `setup_windows.ps1` | Tạo `.venv`, cài gói, đăng ký kernel và kiểm tra đầu vào. |
 | `apply_ems_overrides.ps1` | Chép bốn bản điều chỉnh từ `ems_overrides/` vào `EMS_repo/`. |
@@ -30,9 +33,9 @@ Phạm vi: `dav/rvif-2026-dungminhhuy/`. Bản đồ này được đối chiế
 | `run_balanced_stimulus_experiment.ps1` | Lệnh chạy thí nghiệm 20/40/60 ảnh cân bằng. |
 | `feature_dict_RINet.npy` | Bản đồ đặc trưng ảnh do RINet tạo sẵn, khoảng 10,88 GiB; đầu vào MSNet, không phải trọng số. |
 | `model_parameters.zip` | Bản nén checkpoint MSNet pretrained; khi dùng cần giải nén ra `model_parameters/`. |
-| `EMS_repo/` | Submodule EMS gốc, hiện vắng mặt trong worktree; notebook cần thư mục này. Đây là đường dẫn dự kiến, không phải thư mục hiện có. |
-| `.venv/` | Môi trường Python local sẽ được tạo bởi setup; hiện chưa có. |
-| `work/` | Kết quả MSNet tạm và bản sao `prob_val.txt` sẽ được notebook tạo; hiện chưa có. |
+| `EMS_repo/` | Submodule EMS gốc, hiện có trên máy này; khi clone mới cần khởi tạo submodule và áp dụng overrides. |
+| `.venv/` | Môi trường Python local đã tạo trên máy này, không đưa lên Git. |
+| `work/` | Cache và kết quả tạm local, không đưa lên Git. |
 
 ## Dữ liệu `EMS/`
 

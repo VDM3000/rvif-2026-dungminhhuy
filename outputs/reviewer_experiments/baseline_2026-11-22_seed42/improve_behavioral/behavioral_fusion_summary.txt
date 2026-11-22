@@ -1,0 +1,51 @@
+
+Behavioral Fusion MSNet - Summary
+
+1. Baseline
+Method: MSNet baseline
+Acc: 0.83125
+Sensitivity: 0.805114
+Specificity: 0.870833
+AUC: 0.897217
+Precision: 0.857516
+F1-score: 0.824385
+
+2. Best behavior-only model
+Feature set: duration_pupil
+Model: logreg
+Acc: 0.825
+Sensitivity: 0.822443
+Specificity: 0.825694
+AUC: 0.904153
+Precision: 0.826144
+F1-score: 0.820931
+
+3. Best fusion model
+Method: MSNet + Behavioral Fusion
+Feature set: pupil_scanpath
+Behavioral model: hgb
+Alpha MSNet: 0.8
+Behavior weight: 0.2
+Acc: 0.84375
+Sensitivity: 0.846307
+Specificity: 0.836111
+AUC: 0.950253
+Precision: 0.840322
+F1-score: 0.840532
+
+4. Improvement over MSNet baseline
+Delta Acc: 0.0125
+Delta AUC: 0.053037
+Delta F1-score: 0.016147
+
+5. Group-level permutation importance
+                     group  n_features  base_auc  mean_auc_drop  std_auc_drop  min_auc_drop  max_auc_drop
+all_best_behavior_features         173       1.0       0.507312      0.040701      0.430312      0.599844
+               pupil_group          90       1.0       0.150396      0.018465      0.107969      0.188750
+            scanpath_group          83       1.0       0.139703      0.015795      0.099062      0.164844
+
+6. Interpretation note
+The best fusion model combines official MSNet probability with behavioral probability from pupil and scanpath features.
+The selected average fusion weight is 0.8 for MSNet and 0.2 for behavioral features.
+This suggests that MSNet remains the main predictor, while pupil dynamics and scanpath statistics provide complementary information not directly exploited by the original MSNet pipeline.
+The full-dataset permutation importance is used only for interpretation, not as the main validation result.

@@ -1,0 +1,11 @@
+Data completeness note
+
+The proposed behavioral model was trained using the processed subject-level feature table.
+Therefore, the main completeness statistic reported in the paper should be based on num_valid_images in subject_behavior_features.csv.
+
+In this processed feature table:
+- 148 out of 160 subjects have behavioral records for all 100 stimulus images.
+- 12 out of 160 subjects have fewer than 100 processed image records.
+- The most incomplete case is subject 216, an SZ subject in Set_0, with 63 processed image records.
+
+A separate raw Excel audit was performed only for data-quality verification. It confirmed that subject 216 has only 63 unique image records in the public raw fixation file. This should be described as incomplete public fixation/image records, not as proof that the subject did not view the missing stimuli.

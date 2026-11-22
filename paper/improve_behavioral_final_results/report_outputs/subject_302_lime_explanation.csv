@@ -1,0 +1,8 @@
+feature_rule,lime_weight_for_SZ
+0.16 < pupil_cv_max <= 0.18,0.18090103863138796
+pupil_max_std <= 94.53,0.1779254866559234
+pupil_median_std <= 92.45,0.14330298776603118
+x_mean_max > 740.97,0.13248854953950562
+saccade_amplitude_max_median <= 318.97,0.13236729678169676
+pupil_delta_step_abs_mean_median <= 38.36,0.10271830180178351
+0.09 < pupil_cv_mean <= 0.11,-0.08967131374001969

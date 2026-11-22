@@ -1,0 +1,2 @@
+fold,alpha_fold,train_folds,alpha_msnet,calibration_auc,threshold,acc,sensitivity,specificity,auc,precision,f1_score,tn,fp,fn,tp
+Set_3,Set_0,"('Set_1', 'Set_2')",0.35,0.8358585858585859,0.5764705882352941,0.775,0.6363636363636364,0.9444444444444444,0.8409090909090909,0.9333333333333333,0.7567567567567568,17,1,8,14
