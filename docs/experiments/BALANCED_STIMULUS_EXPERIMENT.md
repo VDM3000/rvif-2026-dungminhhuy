@@ -1,6 +1,6 @@
 # Balanced EMS stimulus-count experiment
 
-This experiment follows `message2.txt` and changes only the selected stimulus
+This experiment follows `docs/history/message2.txt` and changes only the selected stimulus
 list. Three nested, category-balanced conditions are generated with seed 42:
 
 | Condition | Images/category | Total |

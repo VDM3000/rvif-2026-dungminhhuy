@@ -266,7 +266,7 @@ def main():
     all_predictions.to_csv(summary_dir / "subject_predictions.csv", index=False)
     write_summary(results, all_metrics)
     write_json(OUTPUT_ROOT / "protocol.json", {
-        "source": "message2.txt", "seed": 42, "stimulus_counts": list(STIMULUS_COUNTS),
+        "source": "docs/history/message2.txt", "seed": 42, "stimulus_counts": list(STIMULUS_COUNTS),
         "nested": True, "subjects": 160, "folds": list(FOLDS),
         "feature_set": "Pupil + Scanpath", "classifier": "HistGradientBoosting",
         "hgb_config": {"max_iter": 300, "learning_rate": 0.03, "max_leaf_nodes": 15,

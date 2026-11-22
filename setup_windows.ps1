@@ -29,11 +29,10 @@ if (-not $SkipInstall) {
     & $VenvPython -m pip install -r (Join-Path $ProjectRoot "requirements-windows.txt")
 }
 
-& $VenvPython (Join-Path $ProjectRoot "tools\prepare_local_notebook.py")
 & $VenvPython -m ipykernel install --sys-prefix --name rvif-ems --display-name "RVIF EMS (Windows GPU)"
 & $VenvPython (Join-Path $ProjectRoot "tools\verify_local_setup.py")
 
 Write-Host ""
 Write-Host "Setup complete. Start Jupyter with:"
 Write-Host "  .\.venv\Scripts\python.exe -m jupyter lab"
-Write-Host "Then open notebook_windows.ipynb and select 'RVIF EMS (Windows GPU)'."
+Write-Host "Then open notebooks/windows.ipynb and select 'RVIF EMS (Windows GPU)'."

@@ -247,7 +247,7 @@ def main() -> None:
     write_report(ordered, winners, summary_dir / "RESULTS_FIXED_PROTOCOL.md")
     make_plot(ordered, summary_dir / "fixed_protocol_metrics.png")
     write_json(OUTPUT_ROOT / "protocol.json", {
-        "source": "message.txt",
+        "source": "docs/history/message.txt",
         "subjects": 160,
         "folds": list(FOLDS),
         "feature_set": "Pupil + Scanpath",

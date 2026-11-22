@@ -1,4 +1,4 @@
-# Giao thức cố định từ message.txt
+# Giao thức cố định từ docs/history/message.txt
 
 Đây là pipeline chính thức cho câu hỏi nghiên cứu theo category. Cả bốn category
 dùng đúng một cấu hình:

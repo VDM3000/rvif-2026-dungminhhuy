@@ -11,7 +11,7 @@ DATASET = ROOT / "EMS"
 REPO = ROOT / "EMS_repo"
 FEATURE_DICT = ROOT / "feature_dict_RINet.npy"
 WEIGHTS = ROOT / "model_parameters"
-NOTEBOOK = ROOT / "notebook_windows.ipynb"
+NOTEBOOK = ROOT / "notebooks" / "windows.ipynb"
 
 
 def require(path: Path, description: str) -> None:

@@ -1,7 +1,7 @@
 # Kết quả thí nghiệm EMS theo category
 
 > **Lưu ý:** Đây là phân tích exploratory đã tối ưu feature/model/alpha riêng cho
-> từng category. Kết quả chính thức theo cấu hình cố định trong `message.txt` nằm
+> từng category. Kết quả chính thức theo cấu hình cố định trong `docs/history/message.txt` nằm
 > tại `outputs/fixed_original_protocol/summary/RESULTS_FIXED_PROTOCOL.md`.
 
 Đơn vị dưới đây là trung bình OOF của 4 fold chính thức. AUC là chỉ số chính.
