@@ -51,8 +51,8 @@ def otsu_threshold(scores) -> float:
     return float(threshold / 255.0)
 
 
-def select_alpha(labels, msnet_scores, behavior_scores, alphas=ALPHAS) -> dict[str, float]:
-    """Choose alpha and one threshold using only calibration-subject arrays."""
+def alpha_candidates(labels, msnet_scores, behavior_scores, alphas=ALPHAS) -> pd.DataFrame:
+    """Evaluate the alpha grid using calibration subjects only."""
     labels = np.asarray(labels, dtype=int)
     msnet_scores = np.asarray(msnet_scores, dtype=float)
     behavior_scores = np.asarray(behavior_scores, dtype=float)
@@ -67,6 +67,11 @@ def select_alpha(labels, msnet_scores, behavior_scores, alphas=ALPHAS) -> dict[s
                            "auc": float(roc_auc_score(labels, score)),
                            "f1_score": float(f1_score(labels, predicted, zero_division=0)),
                            "acc": float(accuracy_score(labels, predicted))})
-    ranked = pd.DataFrame(candidates).sort_values(["auc", "f1_score", "acc", "alpha_msnet"],
+    return pd.DataFrame(candidates)
+
+
+def select_alpha(labels, msnet_scores, behavior_scores, alphas=ALPHAS) -> dict[str, float]:
+    """Choose alpha and one threshold using only calibration-subject arrays."""
+    ranked = alpha_candidates(labels, msnet_scores, behavior_scores, alphas).sort_values(["auc", "f1_score", "acc", "alpha_msnet"],
                                                   ascending=[False, False, False, True])
     return {key: float(value) for key, value in ranked.iloc[0].to_dict().items()}

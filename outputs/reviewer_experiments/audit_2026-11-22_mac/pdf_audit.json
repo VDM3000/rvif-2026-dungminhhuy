@@ -1,0 +1,51 @@
+[
+  {
+    "page": 1,
+    "blue_spans": 75,
+    "blue_text": "In   a   separate   2/1/1   fold   evaluation   with   newly   trained MSNet   models,   mean   AUC   is   77.80%   for   MSNet,   84.92%   for late   fusion,   and   83.84%   for   feature-level   fusion;   these   estimates use   a   different   training   and   selection   protocol   from   the  ",
+    "page_width": 595.280029296875,
+    "out_of_page_spans": 0
+  },
+  {
+    "page": 2,
+    "blue_spans": 0,
+    "blue_text": "",
+    "page_width": 595.280029296875,
+    "out_of_page_spans": 0
+  },
+  {
+    "page": 3,
+    "blue_spans": 0,
+    "blue_text": "",
+    "page_width": 595.280029296875,
+    "out_of_page_spans": 0
+  },
+  {
+    "page": 4,
+    "blue_spans": 94,
+    "blue_text": "  These   figures   describe   the   selected   configuration on   the   four   development   folds:   comparing   21   feature\u2013 classifier   configurations   and   fusion   weights   on   these   folds can   make   the   reported   maximum   optimistic.   The   1.25- point   accuracy   gain   corre",
+    "page_width": 595.280029296875,
+    "out_of_page_spans": 0
+  },
+  {
+    "page": 5,
+    "blue_spans": 713,
+    "blue_text": "Across   the   21   tested   weights,   the   mean   four-fold   AUC difference   from   MSNet   is   never   negative,   but   13   of   the 84   individual   weight\u2013fold   comparisons   have   a   negative difference.   Hence   the   mean   curve   does   not   imply   a   gain at   every   weight",
+    "page_width": 595.280029296875,
+    "out_of_page_spans": 0
+  },
+  {
+    "page": 6,
+    "blue_spans": 230,
+    "blue_text": "subjects   per   rotation;   feature-level   fusion   is   1.09   points below   late   fusion.   At   the   fixed   tuning-derived   thresholds, late   fusion   corrects   26   MSNet   errors   but   also   changes 18   correct   MSNet   decisions   into   errors,   yielding   eight additional   co",
+    "page_width": 595.280029296875,
+    "out_of_page_spans": 0
+  },
+  {
+    "page": 7,
+    "blue_spans": 75,
+    "blue_text": "rule,   so   they   do   not   isolate   the   effect   of   fold   separation on   the   historical   95.03%   AUC.   The   selected   weights   also vary   across   the   four   rotations;   identical   predictions   across three   seeds   of   the   fixed   pretrained-MSNet   branch   do   not es",
+    "page_width": 595.280029296875,
+    "out_of_page_spans": 0
+  }
+]

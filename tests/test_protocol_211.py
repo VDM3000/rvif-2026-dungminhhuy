@@ -1,10 +1,40 @@
 import unittest
+import json
+import tempfile
+from pathlib import Path
+from unittest.mock import patch
 
 import numpy as np
 import pandas as pd
 
 
 class Protocol211Tests(unittest.TestCase):
+    def test_completed_run_can_be_reopened_after_json_roundtrip(self):
+        from reviewer_experiments.train_211 import main
+        from reviewer_experiments.seed_alpha import sha256
+
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            cache = root / "cache"
+            cache.mkdir()
+            (cache / "features_100.npy").write_bytes(b"not read for a completed run")
+            behavior, features = root / "behavior.csv", root / "features.json"
+            behavior.write_text("subject_int\n")
+            features.write_text("{}")
+            folder = root / "results" / "Set_0"
+            folder.mkdir(parents=True)
+            config = {"eval_fold": "Set_0", "alpha_fold": "Set_1", "train_folds": ["Set_2", "Set_3"],
+                      "epochs": 50, "batch_size": 4, "seed": 42,
+                      "cache_sha256": sha256(cache / "features_100.npy"),
+                      "behavior_sha256": sha256(behavior), "feature_sets_sha256": sha256(features)}
+            (folder / "run_config.json").write_text(json.dumps(config))
+            (folder / "completed.json").write_text("{}")
+            argv = ["train_211", "--cache-dir", str(cache), "--behavior-features", str(behavior),
+                    "--feature-sets", str(features), "--output-root", str(root / "results"),
+                    "--eval-fold", "Set_0"]
+            with patch("sys.argv", argv):
+                main()
+
     def test_four_roles_cover_each_fold_once_without_overlap(self):
         from reviewer_experiments.protocol_211 import fold_roles
 

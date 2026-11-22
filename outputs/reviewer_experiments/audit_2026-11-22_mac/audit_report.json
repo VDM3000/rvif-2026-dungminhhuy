@@ -1,0 +1,123 @@
+{
+  "audited_at": "2026-11-22T21:20:02.221920+07:00",
+  "kind": "retrospective saved-artifact audit; no retraining",
+  "folds": {
+    "Set_0": {
+      "train_folds": [
+        "Set_2",
+        "Set_3"
+      ],
+      "calibration_fold": "Set_1",
+      "alpha": 0.0,
+      "msnet_epochs": 50,
+      "early_shape": [
+        160,
+        229
+      ],
+      "early_head_max_probability_error": 1.161215209544153e-07,
+      "checkpoint_hashes_match": true,
+      "preprocessing_fitted_on_train_only": true,
+      "hgb_refit_on_80_train_matches_predictions": true,
+      "saved_embeddings_match_msnet_head_scores": true
+    },
+    "Set_1": {
+      "train_folds": [
+        "Set_0",
+        "Set_3"
+      ],
+      "calibration_fold": "Set_2",
+      "alpha": 0.1,
+      "msnet_epochs": 50,
+      "early_shape": [
+        160,
+        229
+      ],
+      "early_head_max_probability_error": 1.4620056154601713e-07,
+      "checkpoint_hashes_match": true,
+      "preprocessing_fitted_on_train_only": true,
+      "hgb_refit_on_80_train_matches_predictions": true,
+      "saved_embeddings_match_msnet_head_scores": true
+    },
+    "Set_2": {
+      "train_folds": [
+        "Set_0",
+        "Set_1"
+      ],
+      "calibration_fold": "Set_3",
+      "alpha": 0.05,
+      "msnet_epochs": 50,
+      "early_shape": [
+        160,
+        229
+      ],
+      "early_head_max_probability_error": 1.2274642946508152e-07,
+      "checkpoint_hashes_match": true,
+      "preprocessing_fitted_on_train_only": true,
+      "hgb_refit_on_80_train_matches_predictions": true,
+      "saved_embeddings_match_msnet_head_scores": true
+    },
+    "Set_3": {
+      "train_folds": [
+        "Set_1",
+        "Set_2"
+      ],
+      "calibration_fold": "Set_0",
+      "alpha": 0.35,
+      "msnet_epochs": 50,
+      "early_shape": [
+        160,
+        229
+      ],
+      "early_head_max_probability_error": 1.2112609859560308e-07,
+      "checkpoint_hashes_match": true,
+      "preprocessing_fitted_on_train_only": true,
+      "hgb_refit_on_80_train_matches_predictions": true,
+      "saved_embeddings_match_msnet_head_scores": true
+    }
+  },
+  "text_hash_checks": {
+    "subject_behavior_features.csv": "matches original after LF-to-CRLF conversion",
+    "feature_sets_clean.json": "matches original after LF-to-CRLF conversion"
+  },
+  "warnings": [
+    "Original 2/1/1 pre-run manifests are incomplete; this audit cannot backdate provenance.",
+    "MSNet embeddings were not regenerated from raw RINet features."
+  ],
+  "Late Fusion 2/1/1": {
+    "subjects": 160,
+    "unique_subjects": 160
+  },
+  "Early Fusion 2/1/1": {
+    "subjects": 160,
+    "unique_subjects": 160
+  },
+  "mean_auc": {
+    "MSNet 2/1/1": 0.7780011047979798,
+    "Late Fusion 2/1/1": 0.8492376893939394,
+    "Early Fusion 2/1/1": 0.8383522727272728
+  },
+  "seeds": {
+    "identical_predictions": true,
+    "sample_variance": {
+      "acc": 0.0,
+      "sensitivity": 0.0,
+      "specificity": 0.0,
+      "auc": 0.0,
+      "precision": 0.0,
+      "f1_score": 0.0
+    },
+    "negative_fold_alpha_deltas": 13,
+    "negative_mean_alpha_deltas": 0
+  },
+  "status": "PASS",
+  "environment": {
+    "python": "3.11.15",
+    "numpy": "1.26.4",
+    "pandas": "2.2.3",
+    "scikit-learn": "1.5.2",
+    "torch": "2.7.0",
+    "timm": "0.9.16"
+  },
+  "repository_head": "9d13e4dcb66c37ad4989b17cbc2a1bcea32dc502",
+  "scope": "Existing predictions, checkpoint hashes, recalibration, HGB refit, saved MSNet embeddings/head, seed tables; no full MSNet retraining."
+}

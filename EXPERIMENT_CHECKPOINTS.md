@@ -32,8 +32,8 @@
 
 | ID | Quyết định cần chốt | Trạng thái |
 |---|---|---|
-| D-01 | MSNet huấn luyện từ đầu trên đúng 80 train, 50 epoch cố định, dùng checkpoint epoch cuối; không đọc fold chọn α hoặc fold đánh giá để chọn epoch. | Đã chốt; cần chạy kiểm chứng |
-| D-02 | Early head 229→32→1, ReLU, dropout 0,2; AdamW 0,001, tối đa 100 epoch, chọn bằng AUC của 40 người giữa với patience 10. Encoder MSNet giữ cố định. | Đã chốt; cần chạy kiểm chứng |
+| D-01 | MSNet huấn luyện từ đầu trên đúng 80 train, 50 epoch cố định, dùng checkpoint epoch cuối; không đọc fold chọn α hoặc fold đánh giá để chọn epoch. | Đã chạy; có đủ bốn lịch sử 50 epoch và checkpoint, đã đối chiếu split/metric khi rà soát trên Mac. |
+| D-02 | Early head 229→32→1, ReLU, dropout 0,2; AdamW 0,001, tối đa 100 epoch, chọn bằng AUC của 40 người giữa với patience 10. Encoder MSNet giữ cố định. | Đã chạy; đã kiểm tra epoch được chọn, preprocessing trên train và tái tạo xác suất từ head đã lưu. |
 | D-03 | Ngưỡng Otsu của Late/Early Fusion tính từ 40 người giữa sau khi khóa model; dùng nguyên ngưỡng đó cho 40 người đánh giá. | Đã chốt; kiểm tra `tests/test_protocol_211.py` |
 | D-04 | Giữ đủ bốn lượt huấn luyện MSNet đúng 2/1/1. Cache 160 người (0,88 GiB) và pilot batch 4 chạy được trên GPU local; tiếp tục tại máy này, chỉ chuyển máy nếu run đầy đủ gặp giới hạn tài nguyên. | Đã chốt; pilot local đạt |
 
@@ -58,3 +58,20 @@
 - **Quy tắc sửa bài:** giữ `main.tex` hiện tại làm mốc (SHA-256 trong manifest baseline); khi thực hiện R-01, mọi đoạn viết thêm hoặc sửa phải được tô màu xanh trong LaTeX bằng `\textcolor{blue}{...}` hoặc macro tương đương. Kiểm tra bản PDF để chắc chắn màu hiện ra đúng và không tô xanh nội dung không đổi.
 - **Không được nhầm:** α fusion với `alpha` nội bộ MSNet; ba seed với CI; fold đánh giá 2/1/1 với hidden/external test; head gốc 56 chiều với MLP 229 chiều mới.
 - **Worktree có trước khi lập spec:** các tài liệu đang được chuyển sang `docs/`; `EMS_repo` có trạng thái Git `D`. Không dùng lệnh reset để xóa thay đổi này.
+
+## Rà soát lại sau bàn giao trên Mac — 2026-11-22
+
+- Đã pull bản bàn giao `9d13e4d`. Các output reviewer và snapshot bài báo đã có; nhận xét thiếu output ở bản clone trước không còn áp dụng. Snapshot hiện dùng để rà soát là `paper/main.tex` và `paper/main.pdf`.
+- Dữ liệu local được liên kết từ `../EMS 3/`, `../feature_dict_RINet.npy` và `../model_parameters/`; đủ 160 train/validation, 48 test, 100 ảnh, bốn checkpoint pretrained. Đã đọc 208 workbook fixation, đối chiếu ID/fold và tham chiếu ảnh. Hash notebook, workbook, RINet, bốn checkpoint pretrained và bản LaTeX trước sửa đều khớp baseline. Đã tạo đủ 20.800 đầu vào `EMS/TXT/` bằng mã EMS gốc.
+- Môi trường kiểm tra riêng: `work/audit-venv/bin/python`, Python 3.11 ARM, NumPy 1.26.4, pandas 2.2.3, sklearn 1.5.2, torch 2.7.0. Kiểm tra model bằng checkpoint thật đạt; 15 bài kiểm tra mã đạt. Máy kiểm tra dùng CPU; không huấn luyện lại bốn MSNet.
+- Đã sửa lỗi resume do so sánh tuple với list sau khi đọc JSON; bộ tổng hợp nay tính lại metric từ prediction và từ chối metric/nhãn dự đoán không nhất quán. Không thay đổi các kết quả lịch sử.
+- Bằng chứng rà soát bổ sung ở `outputs/reviewer_experiments/audit_2026-11-22_mac/`: `audit_report.json`, metric được tính lại, bảng và hình `alpha_calibration_211`. Hình mới sử dụng riêng 40 người chọn α mỗi lượt và đánh dấu α đã chọn, bổ sung yêu cầu tại Mục 5 của spec. Mã tái lập: `python -m tools.audit_reviewer_results --output <thu_muc_moi>`.
+- Đã đối chiếu đủ 160 người mỗi phương pháp, α/ngưỡng từ fold giữa, hash MSNet/head và preprocessing; AUC khớp 77,80% / 84,92% / 83,84%. Dự đoán ba seed giống hệt, variance mẫu bằng 0; 13/84 điểm ΔAUC theo fold âm, không có điểm trung bình âm. Chênh lệch hash ở CSV/JSON đầu vào được giải thích chính xác bởi Git chuẩn hóa CRLF sang LF, không sửa dữ liệu để ép khớp hash.
+- Đã xem đủ bảy trang PDF; phần thay đổi so với bản LaTeX baseline được tô xanh và có màu xanh trên các trang 1, 4–7. Hai bảng cũ còn vượt bề rộng cột, cần chỉnh và biên dịch lại trước khi nộp.
+- **Giới hạn còn lại:** manifest trước chạy của các run 2/1/1 chưa đầy đủ theo quy tắc chung của spec; không được coi báo cáo rà soát sau chạy là manifest đã lập trước chạy. Chưa tái tạo embedding MSNet từ toàn bộ RINet trên Mac; đã kiểm tra các artifact embedding/head được lưu. Vì vậy, xác nhận hiện tại là tính nhất quán của mã và kết quả bàn giao, không phải một lần huấn luyện tái lập từ đầu.
+
+## Bản gửi GVHD — 2026-11-22
+
+- Bài chính ở [paper/main.pdf](paper/main.pdf), 7 trang. Đã thu gọn Bảng III và VI, cập nhật diễn giải kết quả 2/1/1 và tô xanh phần chữ sửa. Đã kiểm tra bố cục cả bảy trang và xác nhận log lượt biên dịch cuối hết cảnh báo tràn dòng.
+- [Phụ lục Hình S1](paper/supplement/alpha_211.pdf) có bốn đường AUC trên fold chọn α cùng các trọng số được chọn. Tách hình thành file gửi kèm để giữ số trang bài chính.
+- [Hồ sơ tái lập bổ sung](outputs/reviewer_experiments/audit_2026-11-22_mac/reproducibility_record.json) ghi nguồn cấu hình, kết quả và hash của bốn MSNet checkpoint cùng bốn Early Fusion head. Hồ sơ lập sau khi chạy. Seed thực tế của Early Fusion và môi trường của lần huấn luyện 2/1/1 gốc còn thiếu xác nhận.

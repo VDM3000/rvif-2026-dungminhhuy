@@ -7,8 +7,10 @@ work/
 
 # EMS data and large model assets (not licensed/distributed in this repository)
 EMS/
+/EMS
 feature_dict_RINet.npy
 model_parameters/
+/model_parameters
 *.npy
 *.pt
 *.pth

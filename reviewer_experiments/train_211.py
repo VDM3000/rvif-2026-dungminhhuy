@@ -22,7 +22,7 @@ from timm.scheduler import create_scheduler_v2
 from torch import nn
 from torch.utils.data import DataLoader, Dataset
 
-from .protocol_211 import fold_roles, select_alpha, validate_subject_map
+from .protocol_211 import alpha_candidates, fold_roles, select_alpha, validate_subject_map
 from .seed_alpha import sha256
 
 
@@ -159,7 +159,7 @@ def main() -> None:
     train_folds, alpha_fold, evaluation_fold = fold_roles(args.eval_fold)
     folder = args.output_root / evaluation_fold
     folder.mkdir(parents=True, exist_ok=True)
-    config = {"eval_fold": evaluation_fold, "alpha_fold": alpha_fold, "train_folds": train_folds,
+    config = {"eval_fold": evaluation_fold, "alpha_fold": alpha_fold, "train_folds": list(train_folds),
               "epochs": args.epochs, "batch_size": args.batch_size, "seed": args.seed,
               "cache_sha256": sha256(args.cache_dir / "features_100.npy"),
               "behavior_sha256": sha256(args.behavior_features), "feature_sets_sha256": sha256(args.feature_sets)}
@@ -206,6 +206,8 @@ def main() -> None:
     calibration = combine(alpha_indices, model_alpha)
     evaluated = combine(eval_indices, model_eval)
     choice = select_alpha(calibration.label, calibration.msnet_prob, calibration.behavior_prob)
+    alpha_candidates(calibration.label, calibration.msnet_prob, calibration.behavior_prob).to_csv(
+        folder / "alpha_calibration_curve.csv", index=False)
     for part in (calibration, evaluated):
         part["alpha_msnet"] = choice["alpha_msnet"]
         part["fused_prob"] = (choice["alpha_msnet"] * part.msnet_prob +

@@ -211,18 +211,18 @@ HGB & $D+P+S$ & 233 & 76.25 & 84.43 & 67.22 & \underline{87.10} & 77.57 \\
 \end{table}
 
 % \subsection{Main Results}
-Table~\ref{tab:main_results} compares the reproduced MSNet, the strongest behavioral-only configuration, and the proposed fusion. The fusion weight $\alpha = 0.8$ (based on our ablation study). Fusion attains the highest AUC, accuracy, sensitivity, and F1-score. Relative to MSNet, it raises AUC by 5.30\% and reduces false negatives, although specificity decreases by 3.47\%. \textcolor{blue}{These figures describe the selected configuration on the four development folds: comparing 21 feature--classifier configurations and fusion weights on these folds can make the reported maximum optimistic. The 1.25-point accuracy gain corresponds to two additional correct decisions among 160 subjects, and the lower specificity remains a relevant trade-off.}
+Table~\ref{tab:main_results} compares the reproduced MSNet, the strongest behavioral-only configuration, and the proposed fusion. \textcolor{blue}{The historical fusion uses an MSNet weight of $\alpha=0.8$.} Fusion attains the highest AUC, accuracy, sensitivity, and F1-score. \textcolor{blue}{Relative to MSNet, fusion raises mean AUC by 5.30 percentage points, reduces false negatives, and lowers specificity by 3.47 points. The accuracy gain corresponds to two additional correct decisions among 160 subjects. The 21 feature--classifier configurations and fusion weights were compared on the same four development folds, so the reported performance of the selected configuration may be optimistic.}
 
 
 % We verified specificity as $\mathrm{TN}/(\mathrm{TN}+\mathrm{FP})$ within each fold before macro-averaging; the result therefore reflects a genuine sensitivity--specificity trade-off rather than a transcription error.
 
 \begin{table}[t]
-\caption{Average subject-level performance over the four EMS validation folds (\%).}
+\caption{\textcolor{blue}{Mean subject-level performance over the four EMS development folds (\%).}}
 \label{tab:main_results}
 \centering
-\small
-\setlength{\tabcolsep}{5pt}
-\begin{tabular}{llcccccc}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}llrrrrr@{}}
 \toprule
 Method & Configuration & Acc. & Sen. & Spe. & AUC &  F1 \\
 \midrule
@@ -277,7 +277,7 @@ Figure~\ref{fig:alpha_curve} analyzes the selected pupil--scanpath HGB branch ov
 \end{figure}
 
 \subsection{\textcolor{blue}{Separated 2/1/1 Validation and Feature-Level Fusion}}
-\textcolor{blue}{To assess the fixed pupil--scanpath HGB configuration with separate tuning and evaluation subjects, we rotate the four EMS folds through a 2/1/1 protocol. For each evaluation fold, the next fold cyclically selects the fusion weight and decision threshold, and the remaining two folds (80 subjects) train a new MSNet and HGB model. MSNet is trained from scratch for a fixed 50 epochs; its final checkpoint is used without consulting the tuning or evaluation fold. We select $\alpha$ on the 40 tuning subjects from the grid $\{0,0.05,\ldots,1\}$ by AUC, then F1 and accuracy, and compute an Otsu threshold from their fused scores. Both choices are fixed before scoring the 40 evaluation subjects. All metrics are unweighted means of the four evaluation folds.}
+\textcolor{blue}{To assess the fixed pupil--scanpath HGB configuration with separate tuning and evaluation subjects, we rotate the four EMS folds through a 2/1/1 protocol. For each evaluation fold, the next fold cyclically selects the fusion weight and decision threshold. The remaining two folds (80 subjects) train a new MSNet and HGB model. MSNet is trained from scratch for 50 epochs, and we use the final checkpoint. We select $\alpha$ on the 40 tuning subjects from the grid $\{0,0.05,\ldots,1\}$ by AUC, then F1 and accuracy, and compute an Otsu threshold from their fused scores. We apply the selected weight and threshold to the 40 evaluation subjects. We report unweighted means of the four evaluation folds.}
 
 \textcolor{blue}{For feature-level fusion, the newly trained MSNet encoder remains frozen. We take its 56-dimensional vector immediately before the original classification head, concatenate the 173 pupil--scanpath features, and train a new 229-input head with a 32-unit hidden layer, ReLU, and dropout 0.2. Behavioral imputation and scaling are fitted only on the 80 training subjects. The head is trained with AdamW and binary cross-entropy; its epoch is selected by AUC on the same 40 tuning subjects, with a maximum of 100 epochs and patience of 10. Feature-level fusion has no probability-fusion weight $\alpha$.}
 
@@ -299,7 +299,7 @@ Feature-level fusion & 74.38 & 73.10 & 73.40 & 83.84 & 8.77 & 72.27 \\
 \end{tabular}
 \end{table}
 
-\textcolor{blue}{Table~\ref{tab:separated_validation} shows a 7.12-point mean AUC gain for late fusion over the MSNet models trained on the same 80 subjects per rotation; feature-level fusion is 1.09 points below late fusion. At the fixed tuning-derived thresholds, late fusion corrects 26 MSNet errors but also changes 18 correct MSNet decisions into errors, yielding eight additional correct decisions overall. The selected MSNet fusion weights are 0, 0.10, 0.05, and 0.35 for Set\_0 through Set\_3, respectively; the historical $\alpha=0.8$ is therefore not stable under this changed training protocol. The 84.92\% AUC cannot be directly compared with the historical 95.03\% as an isolated effect of fold separation: the new MSNet sees 80 rather than 120 training subjects and uses a fixed final epoch. This is internal validation of a previously selected feature--classifier configuration, not an external test or a nested evaluation of all 21 candidate configurations.}
+\textcolor{blue}{In Table~\ref{tab:separated_validation}, late fusion gains 7.12 percentage points in mean AUC over MSNet trained on the same 80 subjects per rotation. Late fusion leads feature-level fusion by 1.09 points on these folds. At the thresholds set on the tuning folds, late fusion classifies 122 of 160 subjects correctly, compared with 114 for MSNet. It corrects 26 MSNet errors and changes 18 correct MSNet decisions into errors. The selected MSNet weights are 0, 0.10, 0.05, and 0.35 for Set\_0 through Set\_3. Supplementary Figure~S1 shows the tuning AUC curves and the selected weights. The 84.92\% and 95.03\% results come from protocols with different training-set sizes (80 and 120 subjects per fold, respectively), checkpoint rules, and weight selection. The 2/1/1 results reflect internal validation on EMS of the feature--classifier configuration previously selected on this dataset.}
 
 \subsection{Stimulus-Set Design Experiments}
 \label{sec:stimulus_design}
@@ -319,7 +319,7 @@ The first experiment partitions the 100 EMS stimuli into manipulated images (32)
 \centering
 \small
 \setlength{\tabcolsep}{5.2pt}
-\begin{tabular}{lrrrrrr}
+\begin{tabular}{@{}lrrrrrr@{}}
 \toprule
 Category & Images & Acc. & Sen. & Spe. & AUC & F1 \\
 \midrule

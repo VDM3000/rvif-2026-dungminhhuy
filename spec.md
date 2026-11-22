@@ -4,7 +4,7 @@
 
 ## 1. Mục tiêu và phạm vi
 
-Thực hiện bốn đề xuất của GVHD: chạy thêm seed, so sánh Early Fusion với Late Fusion, kiểm tra/giải thích đồ thị α, và đánh giá Late Fusion theo cách chia 2/1/1. Bản thảo chuẩn ở `../2026_RVIF_HuyMinhDung_Final/main.tex`; không sửa số liệu hoặc lời văn trong bài trước khi có kết quả đã kiểm tra.
+Thực hiện bốn đề xuất của GVHD: chạy thêm seed, so sánh Early Fusion với Late Fusion, kiểm tra/giải thích đồ thị α, và đánh giá Late Fusion theo cách chia 2/1/1. Bản thảo gốc ở `../2026_RVIF_HuyMinhDung_Final/main.tex`; bản bàn giao trong repository hiện ở `paper/main.tex` và `paper/main.pdf`. Không sửa số liệu hoặc lời văn trong bài trước khi có kết quả đã kiểm tra.
 
 **Nguồn hiện có:** `notebooks/windows.ipynb` đã tạo lại kết quả BAMF chính; `ems_overrides/MSNet.py` định nghĩa MSNet; `EMS/Train_Valid.xlsx` chứa 160 người ở bốn fold; `feature_dict_RINet.npy`, `EMS_repo/`, `.venv/` và `model_parameters/` hiện có trên máy. `outputs/reviewer_experiments/baseline_2026-11-22_seed42/` giữ bản sao kết quả và manifest của lần tái tạo. Không sử dụng 48 người test EMS để tính metric vì không có nhãn.
 

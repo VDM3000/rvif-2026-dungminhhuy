@@ -26,6 +26,24 @@ def audit_evaluations(actual: pd.DataFrame, expected: pd.DataFrame) -> None:
         raise ValueError("Evaluated subject, fold, or label mismatch")
 
 
+def audit_prediction_metrics(part: pd.DataFrame, detail: dict, score_column: str) -> dict:
+    """Recompute saved metrics and reject stale scores, thresholds, or labels."""
+    scores = part[score_column].to_numpy(dtype=float)
+    thresholds = part.threshold.to_numpy(dtype=float)
+    if not np.isfinite(scores).all() or not ((scores >= 0) & (scores <= 1)).all():
+        raise ValueError("Invalid prediction scores")
+    if not np.isfinite(thresholds).all() or not np.allclose(thresholds, detail["threshold"], rtol=0, atol=1e-12):
+        raise ValueError("Prediction threshold mismatch")
+    predicted = (scores >= float(detail["threshold"])).astype(int)
+    if not np.array_equal(predicted, part.pred.to_numpy()):
+        raise ValueError("Predicted label mismatch")
+    measured = fixed_threshold_metrics(part.label, scores, float(detail["threshold"]))
+    for key in METRICS:
+        if not np.isclose(measured[key], detail[key], rtol=0, atol=1e-12):
+            raise ValueError(f"Saved metric mismatch: {key}")
+    return measured
+
+
 def collect(root: Path, expected: pd.DataFrame, method: str) -> tuple[pd.DataFrame, pd.DataFrame]:
     predictions, results = [], []
     for fold in FOLDS:
@@ -39,9 +57,11 @@ def collect(root: Path, expected: pd.DataFrame, method: str) -> tuple[pd.DataFra
         part = pd.read_csv(folder / "evaluation_predictions.csv")
         if len(part) != 40 or set(part.set_name) != {fold}:
             raise ValueError(f"Expected 40 evaluation predictions in {folder}")
+        score_column = "fused_prob" if method == "Late Fusion 2/1/1" else "early_prob"
+        measured = audit_prediction_metrics(part, detail, score_column)
         part["method"] = method
         predictions.append(part)
-        results.append({"method": method, "fold": fold, **{key: detail[key] for key in METRICS}})
+        results.append({"method": method, "fold": fold, **{key: measured[key] for key in METRICS}})
     all_predictions = pd.concat(predictions, ignore_index=True)
     audit_evaluations(all_predictions, expected)
     return all_predictions, pd.DataFrame(results)

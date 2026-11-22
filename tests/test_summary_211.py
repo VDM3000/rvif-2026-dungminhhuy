@@ -4,6 +4,28 @@ import pandas as pd
 
 
 class Summary211Tests(unittest.TestCase):
+    def test_audit_rejects_stale_metric(self):
+        from reviewer_experiments.summarize_211 import audit_prediction_metrics
+        from reviewer_experiments.train_211 import fixed_threshold_metrics
+
+        part = pd.DataFrame({"label": [0, 0, 1, 1], "fused_prob": [0.1, 0.2, 0.8, 0.9],
+                             "threshold": [0.5] * 4, "pred": [0, 0, 1, 1]})
+        detail = fixed_threshold_metrics(part.label, part.fused_prob, 0.5)
+        self.assertEqual(audit_prediction_metrics(part, detail, "fused_prob")["auc"], 1.0)
+        detail["auc"] = 0.5
+        with self.assertRaisesRegex(ValueError, "Saved metric mismatch: auc"):
+            audit_prediction_metrics(part, detail, "fused_prob")
+
+    def test_audit_rejects_stale_prediction(self):
+        from reviewer_experiments.summarize_211 import audit_prediction_metrics
+        from reviewer_experiments.train_211 import fixed_threshold_metrics
+
+        part = pd.DataFrame({"label": [0, 0, 1, 1], "fused_prob": [0.1, 0.2, 0.8, 0.9],
+                             "threshold": [0.5] * 4, "pred": [1, 0, 1, 1]})
+        detail = fixed_threshold_metrics(part.label, part.fused_prob, 0.5)
+        with self.assertRaisesRegex(ValueError, "Predicted label mismatch"):
+            audit_prediction_metrics(part, detail, "fused_prob")
+
     def test_audit_rejects_duplicate_evaluated_subject(self):
         from reviewer_experiments.summarize_211 import audit_evaluations
 

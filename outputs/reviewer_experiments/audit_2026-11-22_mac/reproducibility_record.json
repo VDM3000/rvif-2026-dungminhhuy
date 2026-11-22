@@ -1,0 +1,254 @@
+{
+  "kind": "retrospective_reproducibility_record",
+  "recorded_at": "2026-11-22T21:39:12.574574+07:00",
+  "provenance": "Added after the original runs using saved run records, artifacts and the macOS audit.",
+  "published_artifact_commit": "9d13e4dcb66c37ad4989b17cbc2a1bcea32dc502",
+  "baseline_original_manifest": "outputs/reviewer_experiments/baseline_2026-11-22_seed42/manifest.json",
+  "audit_report": "outputs/reviewer_experiments/audit_2026-11-22_mac/audit_report.json",
+  "audit_environment": {
+    "python": "3.11.15",
+    "numpy": "1.26.4",
+    "pandas": "2.2.3",
+    "scikit-learn": "1.5.2",
+    "torch": "2.7.0",
+    "timm": "0.9.16"
+  },
+  "verified_baseline_input_sha256": {
+    "rvif-2026-dungminhhuy\\notebooks\\windows.ipynb": "08b541fcbff152b479d803a2983c3fcc923f6141cb10bda6fb2a8144b0cdebd7",
+    "rvif-2026-dungminhhuy\\feature_dict_RINet.npy": "f2cb83ac4f993d91c3c5ce210256941b5987f381f8c7df1fe58930779e48cde8",
+    "rvif-2026-dungminhhuy\\EMS\\Train_Valid.xlsx": "d9e0e6772b4b445543b51cfa380b4cd8d9c3826235b96ae1827ae4ba7b44aad8",
+    "2026_RVIF_HuyMinhDung_Final\\main.tex": "9465875cb1cc42527fefe2525ca0890c6097e8e85d98dd66c295bb8ae471c67c",
+    "rvif-2026-dungminhhuy\\model_parameters\\Set_0\\best_model.pt": "04993639346578acac96009dd2aa2db67131dd5ca4a16046a613534ac0bbba62",
+    "rvif-2026-dungminhhuy\\model_parameters\\Set_1\\best_model.pt": "27dc75e500844240fd6e4ed9cc38f2875412d0afe4816d5448d14e21125af9c8",
+    "rvif-2026-dungminhhuy\\model_parameters\\Set_2\\best_model.pt": "a7460aed8d14b0bd15a81fee0b32c170edd32a404af9a628231b9823dfd20863",
+    "rvif-2026-dungminhhuy\\model_parameters\\Set_3\\best_model.pt": "99dbb637401696dfdb9ba61af854b366c5729b1b772294f2026d139f1baf6864"
+  },
+  "baseline_source": {
+    "repo_commit_recorded": "1ad1ac93d1f924fcd12c5cd6b0bd3816575f16d5",
+    "ems_commit_recorded": "966eef1669623db16f69aabc1db8b22299459b00",
+    "environment_recorded": {
+      "python": "3.12.10",
+      "numpy": "1.26.4",
+      "pandas": "2.2.3",
+      "sklearn": "1.5.2",
+      "torch": "2.7.0+cu128"
+    },
+    "worktree_note": "Source run was saved in notebooks/windows.ipynb; source worktree is dirty and not claimed as a clean commit."
+  },
+  "historical_seed_runs": [
+    {
+      "seed": 42,
+      "original_manifest": "outputs/reviewer_experiments/seed_alpha_final_2026-11-22/seed_42/manifest.json",
+      "sklearn": "1.5.2",
+      "created_at_recorded": "2026-11-22T19:31:41.418210+07:00",
+      "msnet": "fixed pretrained OOF probabilities"
+    },
+    {
+      "seed": 17,
+      "original_manifest": "outputs/reviewer_experiments/seed_alpha_final_2026-11-22/seed_17/manifest.json",
+      "sklearn": "1.5.2",
+      "created_at_recorded": "2026-11-22T19:31:43.094348+07:00",
+      "msnet": "fixed pretrained OOF probabilities"
+    },
+    {
+      "seed": 2026,
+      "original_manifest": "outputs/reviewer_experiments/seed_alpha_final_2026-11-22/seed_2026/manifest.json",
+      "sklearn": "1.5.2",
+      "created_at_recorded": "2026-11-22T19:31:44.777622+07:00",
+      "msnet": "fixed pretrained OOF probabilities"
+    }
+  ],
+  "saved_211_runs": [
+    {
+      "evaluation_fold": "Set_0",
+      "late": {
+        "original_config": "outputs/reviewer_experiments/late_211_2026-11-22/Set_0/run_config.json",
+        "original_completion": "outputs/reviewer_experiments/late_211_2026-11-22/Set_0/completed.json",
+        "config_recorded": {
+          "eval_fold": "Set_0",
+          "alpha_fold": "Set_1",
+          "train_folds": [
+            "Set_2",
+            "Set_3"
+          ],
+          "epochs": 50,
+          "batch_size": 4,
+          "seed": 42,
+          "cache_sha256": "cbed89fa514ea8fa8601601f15c0fc1c387246808496a13627123eb010874973",
+          "behavior_sha256": "dafbddc8aa04c7c481f7654b1b4b8c946d7d2b9342f262fbfdc09efb04be857b",
+          "feature_sets_sha256": "3e7a5c37e28bf81ebfae0bd1aad218e48ab958ce44b08e30e72d4892a9b5935a"
+        },
+        "alpha": 0.0,
+        "threshold": 0.4666666666666667,
+        "created_at_recorded": "2026-11-22T19:42:35.702844+07:00",
+        "msnet_checkpoint": {
+          "path": "outputs/reviewer_experiments/late_211_2026-11-22/Set_0/final_model.pt",
+          "sha256": "119c09e29f36638f47106331be971fe5b7cfd69e569ea65911e13f5544dacf30",
+          "matches_original_record": true
+        }
+      },
+      "early": {
+        "original_completion": "outputs/reviewer_experiments/early_211_2026-11-22/Set_0/completed.json",
+        "best_epoch": 3,
+        "threshold": 0.36470588235294116,
+        "created_at_recorded": "2026-11-22T19:46:19.467381+07:00",
+        "head_checkpoint": {
+          "path": "outputs/reviewer_experiments/early_211_2026-11-22/Set_0/head.pt",
+          "sha256": "fdeb9f377bb636cd29d27b14083381cceb70d55d196bddc52c055bb0f763d12c",
+          "matches_original_record": true
+        },
+        "preprocessing": "outputs/reviewer_experiments/early_211_2026-11-22/Set_0/preprocessing.joblib",
+        "encoder": "The verified MSNet checkpoint from the late-fusion run for this fold."
+      }
+    },
+    {
+      "evaluation_fold": "Set_1",
+      "late": {
+        "original_config": "outputs/reviewer_experiments/late_211_2026-11-22/Set_1/run_config.json",
+        "original_completion": "outputs/reviewer_experiments/late_211_2026-11-22/Set_1/completed.json",
+        "config_recorded": {
+          "eval_fold": "Set_1",
+          "alpha_fold": "Set_2",
+          "train_folds": [
+            "Set_0",
+            "Set_3"
+          ],
+          "epochs": 50,
+          "batch_size": 4,
+          "seed": 42,
+          "cache_sha256": "cbed89fa514ea8fa8601601f15c0fc1c387246808496a13627123eb010874973",
+          "behavior_sha256": "dafbddc8aa04c7c481f7654b1b4b8c946d7d2b9342f262fbfdc09efb04be857b",
+          "feature_sets_sha256": "3e7a5c37e28bf81ebfae0bd1aad218e48ab958ce44b08e30e72d4892a9b5935a"
+        },
+        "alpha": 0.1,
+        "threshold": 0.5215686274509804,
+        "created_at_recorded": "2026-11-22T19:43:33.334340+07:00",
+        "msnet_checkpoint": {
+          "path": "outputs/reviewer_experiments/late_211_2026-11-22/Set_1/final_model.pt",
+          "sha256": "4245fec15bef675cd21aa4f69594845bee74d9818b0e60587fe6af114124daa9",
+          "matches_original_record": true
+        }
+      },
+      "early": {
+        "original_completion": "outputs/reviewer_experiments/early_211_2026-11-22/Set_1/completed.json",
+        "best_epoch": 1,
+        "threshold": 0.5176470588235295,
+        "created_at_recorded": "2026-11-22T19:46:29.237716+07:00",
+        "head_checkpoint": {
+          "path": "outputs/reviewer_experiments/early_211_2026-11-22/Set_1/head.pt",
+          "sha256": "3257dbccd24d5f1c9ad48e98c6e8adff6a3ed5c799fa03a2f4dbf93fcf45d2e5",
+          "matches_original_record": true
+        },
+        "preprocessing": "outputs/reviewer_experiments/early_211_2026-11-22/Set_1/preprocessing.joblib",
+        "encoder": "The verified MSNet checkpoint from the late-fusion run for this fold."
+      }
+    },
+    {
+      "evaluation_fold": "Set_2",
+      "late": {
+        "original_config": "outputs/reviewer_experiments/late_211_2026-11-22/Set_2/run_config.json",
+        "original_completion": "outputs/reviewer_experiments/late_211_2026-11-22/Set_2/completed.json",
+        "config_recorded": {
+          "eval_fold": "Set_2",
+          "alpha_fold": "Set_3",
+          "train_folds": [
+            "Set_0",
+            "Set_1"
+          ],
+          "epochs": 50,
+          "batch_size": 4,
+          "seed": 42,
+          "cache_sha256": "cbed89fa514ea8fa8601601f15c0fc1c387246808496a13627123eb010874973",
+          "behavior_sha256": "dafbddc8aa04c7c481f7654b1b4b8c946d7d2b9342f262fbfdc09efb04be857b",
+          "feature_sets_sha256": "3e7a5c37e28bf81ebfae0bd1aad218e48ab958ce44b08e30e72d4892a9b5935a"
+        },
+        "alpha": 0.05,
+        "threshold": 0.4235294117647059,
+        "created_at_recorded": "2026-11-22T19:44:34.034472+07:00",
+        "msnet_checkpoint": {
+          "path": "outputs/reviewer_experiments/late_211_2026-11-22/Set_2/final_model.pt",
+          "sha256": "9c6a3c4b6b5d188ad0697110a4804bd19ab1bc69e15d38e101da71049abcc12c",
+          "matches_original_record": true
+        }
+      },
+      "early": {
+        "original_completion": "outputs/reviewer_experiments/early_211_2026-11-22/Set_2/completed.json",
+        "best_epoch": 1,
+        "threshold": 0.49411764705882355,
+        "created_at_recorded": "2026-11-22T19:46:38.749393+07:00",
+        "head_checkpoint": {
+          "path": "outputs/reviewer_experiments/early_211_2026-11-22/Set_2/head.pt",
+          "sha256": "92032670725b7b2c8a5a488e600a2d35ba78e5b8fd64b8197aed2b83166bcdf6",
+          "matches_original_record": true
+        },
+        "preprocessing": "outputs/reviewer_experiments/early_211_2026-11-22/Set_2/preprocessing.joblib",
+        "encoder": "The verified MSNet checkpoint from the late-fusion run for this fold."
+      }
+    },
+    {
+      "evaluation_fold": "Set_3",
+      "late": {
+        "original_config": "outputs/reviewer_experiments/late_211_2026-11-22/Set_3/run_config.json",
+        "original_completion": "outputs/reviewer_experiments/late_211_2026-11-22/Set_3/completed.json",
+        "config_recorded": {
+          "eval_fold": "Set_3",
+          "alpha_fold": "Set_0",
+          "train_folds": [
+            "Set_1",
+            "Set_2"
+          ],
+          "epochs": 50,
+          "batch_size": 4,
+          "seed": 42,
+          "cache_sha256": "cbed89fa514ea8fa8601601f15c0fc1c387246808496a13627123eb010874973",
+          "behavior_sha256": "dafbddc8aa04c7c481f7654b1b4b8c946d7d2b9342f262fbfdc09efb04be857b",
+          "feature_sets_sha256": "3e7a5c37e28bf81ebfae0bd1aad218e48ab958ce44b08e30e72d4892a9b5935a"
+        },
+        "alpha": 0.35,
+        "threshold": 0.5764705882352941,
+        "created_at_recorded": "2026-11-22T19:45:35.309730+07:00",
+        "msnet_checkpoint": {
+          "path": "outputs/reviewer_experiments/late_211_2026-11-22/Set_3/final_model.pt",
+          "sha256": "d34b355859b70cb016ac86cff2e3ebc2bef38fefd6f164fe6908cfde1c23b056",
+          "matches_original_record": true
+        }
+      },
+      "early": {
+        "original_completion": "outputs/reviewer_experiments/early_211_2026-11-22/Set_3/completed.json",
+        "best_epoch": 2,
+        "threshold": 0.4666666666666667,
+        "created_at_recorded": "2026-11-22T19:46:48.107089+07:00",
+        "head_checkpoint": {
+          "path": "outputs/reviewer_experiments/early_211_2026-11-22/Set_3/head.pt",
+          "sha256": "063fb5c05ec5049a315bb91eedd00f9273cb1f345c3dc2af7499acbb489eb01c",
+          "matches_original_record": true
+        },
+        "preprocessing": "outputs/reviewer_experiments/early_211_2026-11-22/Set_3/preprocessing.joblib",
+        "encoder": "The verified MSNet checkpoint from the late-fusion run for this fold."
+      }
+    }
+  ],
+  "configuration_from_published_code": {
+    "late_msnet": "Random initialization, BCE, AdamW lr=5e-4, weight_decay=0.05, eps=1e-8, cosine with 5 warmup epochs, final fixed epoch.",
+    "late_behavior": "Median imputer and HistGradientBoostingClassifier on 173 pupil/scanpath features. max_iter=300, learning_rate=0.03, max_leaf_nodes=15, l2_regularization=0.01.",
+    "late_weight": "21 candidates from 0 to 1 in steps of 0.05, ranked by tuning AUC, F1, accuracy and finally smaller MSNet weight.",
+    "early_preprocessing": "Train-fitted median imputer and standard scaler on 173 behavioral inputs. Concatenate with frozen 56-dimensional MSNet embeddings.",
+    "early_head": "Linear 229-to-32, ReLU, dropout 0.2, linear 32-to-1. Batch size 16, AdamW lr=0.001, BCEWithLogitsLoss, first best tuning AUC, at most 100 epochs and patience 10.",
+    "threshold": "Otsu on tuning scores. Apply the fixed threshold to evaluation scores.",
+    "source_at_published_commit": {
+      "reviewer_experiments/prepare_cache.py": "a2ccbc5322723cf5d9a2dcbbcd2ab095c911ef3717123c24677c7063ec4ec8d4",
+      "reviewer_experiments/train_211.py": "c346b9bac41d1588bd4a15f6dab4ea44218ae32004eac7e5abc864031b5e5a64",
+      "reviewer_experiments/early_211.py": "ebf2d19b13fd0688164bfce81ad3ba16118c01cc08c6598ef12005ec81ff3ece",
+      "reviewer_experiments/protocol_211.py": "cc85f825d0e62e146b9b80d5ddcc5ea1b5bc90f9143dfe2484f844286bc3b6a2",
+      "reviewer_experiments/seed_alpha.py": "7e71b7045c77d5e05771c0553cfc16726b1629fb30b5945585a4abf0250c6954"
+    }
+  },
+  "unverified_original_information": {
+    "run_start_timestamps": null,
+    "exact_code_worktree_and_package_versions_for_211_training": null,
+    "original_early_head_seed": null,
+    "early_head_cli_default_in_published_source": 42,
+    "raw_msnet_cache": "Original SHA-256 recorded in each late config. The macOS audit used saved embeddings and did not rebuild the cache.",
+    "precision_note": "The macOS audit checked saved outputs and refitted HGB. It did not reproduce full MSNet training."
+  }
+}

@@ -1,4 +1,4 @@
-# Dataset-optimization revision
+# BAMF revision for supervisor review
 
 Upload the contents of this folder to Overleaf and compile main.tex with pdfLaTeX.
 
@@ -16,7 +16,15 @@ Added analyses:
 
 The source result tables, fold AUC values, experiment reports, and validator output are preserved in dataset_optimization_results/ for audit and co-author review.
 
-2026_RIVF_teacher_revision_preview_before_dataset_optimization.pdf is an older preview and does not contain the new analyses. The current `main.tex` includes the three-seed and alpha analyses and the separated 2/1/1 late/feature-level fusion results; all added or revised manuscript text is blue. `main.pdf` is the seven-page verification PDF compiled locally with portable Tectonic. The two older tables still trigger overfull-line warnings; the new 2/1/1 table does not. Recompile the source in the final submission environment and check the resulting PDF before submission.
+Use [main.pdf](main.pdf) and [Supplementary Figure S1](supplement/alpha_211.pdf) for supervisor review. The paper includes the three-seed analysis, the historical fusion-weight analysis, and the 2/1/1 comparison. The substantive revisions are in blue. Tables III and VI use column widths that fit the two-column layout. Figure S1 is a separate attachment to keep the main paper at seven pages.
+
+The [retrospective reproducibility record](../outputs/reviewer_experiments/audit_2026-11-22_mac/reproducibility_record.json) documents the saved configurations, checkpoint hashes, and details that could be confirmed after training. The [audit report](../outputs/reviewer_experiments/audit_2026-11-22_mac/audit_report.json) records checks performed on the saved results. To reproduce that audit from the repository root, run the following command in the project Python environment with the EMS workbook and EMS code available.
+
+```sh
+python -m tools.audit_reviewer_results --output work/reviewer_audit_new
+```
+
+The supplementary figure uses the [2/1/1 tuning AUC data](../outputs/reviewer_experiments/audit_2026-11-22_mac/alpha_calibration_211.csv). Compile its source separately from within the `supplement/` directory.
 
 Included source assets:
 
@@ -26,4 +34,4 @@ Included source assets:
 - the subject-level case-analysis CSV and the LIME explanation for subject 302
 - source outputs for both dataset-optimization experiments
 
-Before submission, confirm the author order, affiliations, ORCID/corresponding-author details, the official RIVF 2026 template, and its page limit. The additional section will increase the manuscript beyond the previous seven-page preview; shorten the paper structurally if required.
+Before submission, confirm the author order, affiliations, ORCID and corresponding-author details, the RIVF 2026 template, and the page limit. Recompile in the submission environment and check the final layout.
