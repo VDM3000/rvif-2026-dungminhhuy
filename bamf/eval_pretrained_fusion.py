@@ -26,11 +26,11 @@ from sklearn.preprocessing import StandardScaler
 from torch import nn
 from torch.utils.data import DataLoader, TensorDataset
 
-from .early_211 import HEAD_DESCRIPTIONS, all_embeddings, fit_head, head_scores, make_head
-from .protocol_211 import FOLDS, load_subject_map, validate_subject_map
-from .seed_alpha import fold_metrics, metrics, sha256
-from .summarize_211 import audit_prediction_metrics
-from .train_211 import seed_everything
+from .early_fusion import all_embeddings, fit_head, head_scores, make_head
+from .splits import FOLDS, load_subject_map, validate_subject_map
+from .seed_analysis import fold_metrics, metrics, sha256
+from .evaluate import audit_prediction_metrics
+from .train_msnet import seed_everything
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -82,12 +82,12 @@ def prepare_combined(embeddings: np.ndarray, behavior: pd.DataFrame,
 
 
 def train_final_head(x: np.ndarray, labels: np.ndarray, train_indices: np.ndarray,
-                     epochs: int, seed: int, device: torch.device, output: Path, head_type="mlp") -> nn.Module:
+                     epochs: int, seed: int, device: torch.device, output: Path) -> nn.Module:
     """Refit a fresh head on all 120 train subjects for the selected epoch count."""
     if len(train_indices) != 120 or not 1 <= epochs <= 100:
         raise ValueError("Final head needs 120 subjects and 1..100 epochs")
     seed_everything(seed)
-    head = make_head(head_type).to(device)
+    head = make_head().to(device)
     optimizer = torch.optim.AdamW(head.parameters(), lr=1e-3)
     loss_fn = nn.BCEWithLogitsLoss()
     data = TensorDataset(torch.from_numpy(x[train_indices]),
@@ -119,7 +119,7 @@ def run_fold(args, cache, metadata: pd.DataFrame, behavior: pd.DataFrame,
     folder = args.output_root / evaluation_fold
     if (folder / "completed.json").exists():
         saved = json.loads((folder / "manifest.json").read_text(encoding="utf-8"))
-        if saved.get("head_type", "mlp") != args.head_type or saved["seed"] != args.seed or saved["checkpoint_sha256"] != sha256(
+        if saved.get("head_type") != "linear" or saved["seed"] != args.seed or saved["checkpoint_sha256"] != sha256(
                 args.checkpoint_root / evaluation_fold / "best_model.pt") or saved["cache_sha256"] != cache_sha256:
             raise ValueError(f"Completed {evaluation_fold} used different inputs or seed")
         print(f"{evaluation_fold}: already complete", flush=True)
@@ -147,8 +147,8 @@ def run_fold(args, cache, metadata: pd.DataFrame, behavior: pd.DataFrame,
                                       text=True, check=True).stdout.strip(),
         "python": sys.version.split()[0], "torch": torch.__version__,
         "numpy": np.__version__, "sklearn": sklearn.__version__,
-        "head_type": args.head_type,
-        "head": HEAD_DESCRIPTIONS[args.head_type],
+        "head_type": "linear",
+        "head": "Linear(229,1)",
         "epoch_rule": "80 inner train, 40 inner selection; best AUC, first tie, patience 10; refit on 120",
         "threshold_rule": "Otsu from outer validation scores without labels, as in historical notebook",
     }
@@ -183,7 +183,7 @@ def run_fold(args, cache, metadata: pd.DataFrame, behavior: pd.DataFrame,
                  "behavior_columns": columns}, selection_folder / "preprocessing.joblib")
     selection_head, selected_epoch, selection_auc = fit_head(
         selection_x, labels, selection_train_indices, selection_indices,
-        args.seed, device, selection_folder, args.head_type)
+        args.seed, device, selection_folder)
     selection_scores = head_scores(selection_head, selection_x, selection_indices, device)
     selected = metadata.iloc[selection_indices][["subject_int", "set_name", "label"]].copy()
     selected["early_prob"] = selection_scores
@@ -192,7 +192,7 @@ def run_fold(args, cache, metadata: pd.DataFrame, behavior: pd.DataFrame,
     final_x, final_imputer, final_scaler = prepare_combined(embeddings, behavior, columns, train_indices)
     joblib.dump({"imputer": final_imputer, "scaler": final_scaler,
                  "behavior_columns": columns}, folder / "preprocessing.joblib")
-    final_head = train_final_head(final_x, labels, train_indices, selected_epoch, args.seed, device, folder, args.head_type)
+    final_head = train_final_head(final_x, labels, train_indices, selected_epoch, args.seed, device, folder)
     validation_scores = head_scores(final_head, final_x, validation_indices, device)
     result = metrics(labels[validation_indices], validation_scores)
     evaluated = metadata.iloc[validation_indices][["subject_int", "subject_id", "set_name", "label"]].copy()
@@ -241,7 +241,7 @@ def summarize(args, expected: pd.DataFrame) -> None:
             raise ValueError(f"Behavioral column order mismatch in {fold}")
         scaled = prep["scaler"].transform(prep["imputer"].transform(behavior[columns])).astype(np.float32)
         combined_x = np.concatenate((embeddings, scaled), axis=1)
-        head = make_head(args.head_type)
+        head = make_head()
         head.load_state_dict(torch.load(folder / "head.pt", map_location="cpu", weights_only=True))
         head.eval()
         indices = np.flatnonzero(expected.set_name == fold)
@@ -287,18 +287,17 @@ def summarize(args, expected: pd.DataFrame) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    runs = ROOT / "outputs/reviewer_experiments"
-    baseline = runs / "baseline_2026-11-22_seed42/improve_behavioral"
-    parser.add_argument("--cache-dir", type=Path, default=ROOT / "work/reviewer_experiments/cache")
+    runs = ROOT / "work/paper_reproduction"
+    baseline = ROOT / "outputs/improve_behavioral"
+    parser.add_argument("--cache-dir", type=Path, default=ROOT / "work/ems_211_cache")
     parser.add_argument("--checkpoint-root", type=Path, default=ROOT / "model_parameters")
     parser.add_argument("--behavior-features", type=Path, default=baseline / "subject_behavior_features.csv")
     parser.add_argument("--feature-sets", type=Path, default=baseline / "feature_sets_clean.json")
     parser.add_argument("--historical-msnet", type=Path, default=baseline / "msnet_prob_val.csv")
     parser.add_argument("--historical-late", type=Path, default=baseline / "best_fusion_prob_val.csv")
-    parser.add_argument("--output-root", type=Path, default=runs / "early_31_final_2026-11-23")
+    parser.add_argument("--output-root", type=Path, default=runs / "early_31")
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--eval-fold", choices=[*FOLDS, "all"], default="all")
-    parser.add_argument("--head-type", choices=HEAD_DESCRIPTIONS, default="mlp")
     args = parser.parse_args()
     expected = load_subject_map(ROOT / "EMS/Train_Valid.xlsx")
     metadata = pd.read_csv(args.cache_dir / "subjects.csv")

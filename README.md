@@ -36,13 +36,15 @@ python scripts/reproduce_paper.py all
 
 This runs the seed analysis, linear Early Fusion on the four development folds, and the 2/1/1 experiments. Outputs are written to work/paper_reproduction/. Run with --help to select a stage.
 
+The first run uses `bamf/preprocess.py` to extract fixation features from the RINet dictionary and store a reusable local cache.
+
 For the stimulus experiments, run the following after the validation notebook:
 
 ```bash
-python category_experiments/prepare_cache.py --category all
+python category_experiments/preprocess.py --category all
 python category_experiments/train_msnet.py --category all
-python category_experiments/run_fixed_protocol.py
+python category_experiments/evaluate.py
 python balanced_stimulus_experiment/prepare.py
 python balanced_stimulus_experiment/train_msnet.py
-python balanced_stimulus_experiment/run_fixed_protocol.py
+python balanced_stimulus_experiment/evaluate.py
 ```

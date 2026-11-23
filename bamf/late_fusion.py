@@ -1,4 +1,4 @@
-"""Run fixed or jointly selected BAMF with 80 train / 40 select / 40 evaluate."""
+"""Evaluate Late Fusion using held-out tuning and evaluation folds."""
 
 from __future__ import annotations
 
@@ -14,10 +14,12 @@ import joblib
 import numpy as np
 import pandas as pd
 
-from .protocol_211 import FOLDS, alpha_candidates, fold_roles, validate_subject_map
-from .seed_alpha import sha256
-from .select_211 import make_behavior_model
-from .train_211 import fixed_threshold_metrics
+from .splits import FOLDS, alpha_candidates, fold_roles, validate_subject_map
+from .seed_analysis import sha256
+from sklearn.ensemble import HistGradientBoostingClassifier
+from sklearn.impute import SimpleImputer
+from sklearn.pipeline import make_pipeline
+from .train_msnet import fixed_threshold_metrics
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -59,9 +61,9 @@ def aligned_msnet(root: Path, fold: str, filename: str, expected: pd.DataFrame) 
 
 
 def one_fold(args, features: pd.DataFrame, feature_sets: dict[str, list[str]],
-             variant: str, eval_fold: str) -> None:
+             eval_fold: str) -> None:
     train_folds, selection_fold, _ = fold_roles(eval_fold)
-    destination = args.output_root / variant / eval_fold
+    destination = args.output_root / eval_fold
     if destination.exists():
         raise FileExistsError(f"Output already exists: {destination}; choose a new --output-root")
     msnet_folder = args.msnet_root / eval_fold
@@ -80,10 +82,9 @@ def one_fold(args, features: pd.DataFrame, feature_sets: dict[str, list[str]],
     destination.mkdir(parents=True)
     manifest = {
         "created_before_run": datetime.now(ZoneInfo("Asia/Ho_Chi_Minh")).isoformat(),
-        "variant": variant, "eval_fold": eval_fold, "training_folds": train_folds,
+        "eval_fold": eval_fold, "training_folds": train_folds,
         "selection_fold": selection_fold, "seed": args.seed,
-        "rule": "fixed P+S/HGB; select alpha on middle fold" if variant == "fixed" else
-                "fit 21 configurations on 80; select feature/model/alpha jointly on middle 40",
+        "rule": "Fit pupil and scanpath HGB on training folds; tune alpha on the tuning fold.",
         "tie_break": "AUC, F1, accuracy rounded to 12 decimals descending; feature, model, alpha ascending",
         "source_sha256": sha256(Path(__file__)),
         "behavior_sha256": sha256(args.behavior_features),
@@ -96,32 +97,22 @@ def one_fold(args, features: pd.DataFrame, feature_sets: dict[str, list[str]],
     }
     (destination / "manifest.json").write_text(json.dumps(manifest, indent=2, default=str), encoding="utf-8")
     msnet_selection = aligned_msnet(args.msnet_root, eval_fold, "calibration_predictions.csv", selection)
-    names = [("pupil_scanpath", "hgb")] if variant == "fixed" else [
-        (feature_set, model_name) for feature_set in feature_sets
-        for model_name in ("logreg", "rf", "hgb")
-    ]
-    candidate_parts = []
-    trained = {}
-    for feature_set, model_name in names:
-        columns = feature_sets[feature_set]
-        model = make_behavior_model(model_name, args.seed)
-        model.fit(training[columns], training.label.astype(int))
-        trained[(feature_set, model_name)] = model
-        behavior_scores = model.predict_proba(selection[columns])[:, 1]
-        options = alpha_candidates(selection.label, msnet_selection.msnet_prob, behavior_scores)
-        options.insert(0, "model", model_name)
-        options.insert(0, "feature_set", feature_set)
-        options.insert(2, "n_features", len(columns))
-        candidate_parts.append(options)
-    candidates = rank_candidates(pd.concat(candidate_parts, ignore_index=True))
-    expected_count = 21 if variant == "fixed" else 441
-    if len(candidates) != expected_count:
-        raise ValueError(f"Expected {expected_count} candidates, got {len(candidates)}")
+    columns = feature_sets["pupil_scanpath"]
+    model = make_pipeline(
+        SimpleImputer(strategy="median"),
+        HistGradientBoostingClassifier(max_iter=300, learning_rate=0.03, max_leaf_nodes=15,
+                                       l2_regularization=0.01, random_state=args.seed),
+    )
+    model.fit(training[columns], training.label.astype(int))
+    scores = model.predict_proba(selection[columns])[:, 1]
+    options = alpha_candidates(selection.label, msnet_selection.msnet_prob, scores)
+    options.insert(0, "model", "hgb")
+    options.insert(0, "feature_set", "pupil_scanpath")
+    options.insert(2, "n_features", len(columns))
+    candidates = rank_candidates(options)
     candidates.to_csv(destination / "selection_candidates.csv", index=False)
     winner = candidates.iloc[0]
-    chosen_set, chosen_model = str(winner.feature_set), str(winner.model)
-    model = trained[(chosen_set, chosen_model)]
-    columns = feature_sets[chosen_set]
+    chosen_set, chosen_model = "pupil_scanpath", "hgb"
     joblib.dump(model, destination / "behavior_model.joblib")
     msnet_eval = aligned_msnet(args.msnet_root, eval_fold, "evaluation_predictions.csv", evaluated)
     for part, source in ((msnet_selection, selection), (msnet_eval, evaluated)):
@@ -135,7 +126,7 @@ def one_fold(args, features: pd.DataFrame, feature_sets: dict[str, list[str]],
         part["model"] = chosen_model
     msnet_selection.to_csv(destination / "selection_predictions.csv", index=False)
     msnet_eval.to_csv(destination / "evaluation_predictions.csv", index=False)
-    result = {"variant": variant, "eval_fold": eval_fold, "selection_fold": selection_fold,
+    result = {"eval_fold": eval_fold, "selection_fold": selection_fold,
               "training_folds": str(train_folds), "feature_set": chosen_set, "model": chosen_model,
               "alpha_msnet": float(winner.alpha_msnet), "selection_auc": float(winner.auc),
               **fixed_threshold_metrics(msnet_eval.label, msnet_eval.fused_prob, float(winner.threshold)),
@@ -147,17 +138,17 @@ def one_fold(args, features: pd.DataFrame, feature_sets: dict[str, list[str]],
         "behavior_model_sha256": sha256(destination / "behavior_model.joblib"),
         "selection_candidates_sha256": sha256(destination / "selection_candidates.csv"),
     }, indent=2), encoding="utf-8")
-    print(f"{variant}/{eval_fold}: {chosen_set}/{chosen_model}, alpha={winner.alpha_msnet:.2f}, "
+    print(f"{eval_fold}: {chosen_set}/{chosen_model}, alpha={winner.alpha_msnet:.2f}, "
           f"AUC={result['auc']:.6f}", flush=True)
 
 
-def summarize(root: Path, variant: str) -> None:
-    rows = pd.concat([pd.read_csv(root / variant / fold / "evaluation_metrics.csv") for fold in FOLDS], ignore_index=True)
-    predictions = pd.concat([pd.read_csv(root / variant / fold / "evaluation_predictions.csv") for fold in FOLDS], ignore_index=True)
+def summarize(root: Path) -> None:
+    rows = pd.concat([pd.read_csv(root / fold / "evaluation_metrics.csv") for fold in FOLDS], ignore_index=True)
+    predictions = pd.concat([pd.read_csv(root / fold / "evaluation_predictions.csv") for fold in FOLDS], ignore_index=True)
     if len(rows) != 4 or len(predictions) != 160 or predictions.subject_int.nunique() != 160:
         raise ValueError("Expected four metrics and 160 unique evaluation subjects")
     for fold in FOLDS:
-        folder = root / variant / fold
+        folder = root / fold
         saved = json.loads((folder / "completed.json").read_text(encoding="utf-8"))
         for name, file in (("manifest_sha256", "manifest.json"),
                            ("behavior_model_sha256", "behavior_model.joblib"),
@@ -174,7 +165,7 @@ def summarize(root: Path, variant: str) -> None:
                 fixed_threshold_metrics(part.label, part.fused_prob, float(reported.threshold))["auc"],
                 reported.auc):
             raise ValueError(f"Stale evaluation metrics: {fold}")
-    folder = root / variant
+    folder = root
     rows.to_csv(folder / "fold_metrics.csv", index=False)
     predictions.to_csv(folder / "all_evaluation_predictions.csv", index=False)
     rows[list(METRICS) + ["msnet_auc"]].mean().to_frame("mean").to_csv(folder / "summary_metrics.csv")
@@ -184,26 +175,24 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     baseline = ROOT / "outputs/improve_behavioral"
     parser.add_argument("--msnet-root", type=Path, required=True,
-                        help="Four 2/1/1 MSNet runs from train_211.py")
+                        help="Directory containing the four trained MSNet folds")
     parser.add_argument("--behavior-features", type=Path, default=baseline / "subject_behavior_features.csv")
     parser.add_argument("--feature-sets", type=Path, default=baseline / "feature_sets_clean.json")
     parser.add_argument("--output-root", type=Path, required=True)
-    parser.add_argument("--variant", choices=["fixed", "joint", "both"], default="both")
     parser.add_argument("--eval-fold", choices=[*FOLDS, "all"], default="all")
     parser.add_argument("--seed", type=int, default=42)
     args = parser.parse_args()
     features = pd.read_csv(args.behavior_features)
     validate_subject_map(features)
     feature_sets = json.loads(args.feature_sets.read_text(encoding="utf-8"))
-    if len(feature_sets) != 7 or any(not set(cols).issubset(features.columns) for cols in feature_sets.values()):
-        raise ValueError("Expected seven feature sets present in behavioral features")
-    variants = ("fixed", "joint") if args.variant == "both" else (args.variant,)
+    columns = feature_sets.get("pupil_scanpath", [])
+    if len(columns) != 173 or not set(columns).issubset(features.columns):
+        raise ValueError("Expected 173 pupil and scanpath features")
     folds = FOLDS if args.eval_fold == "all" else (args.eval_fold,)
-    for variant in variants:
-        for fold in folds:
-            one_fold(args, features, feature_sets, variant, fold)
-        if all((args.output_root / variant / fold / "completed.json").exists() for fold in FOLDS):
-            summarize(args.output_root, variant)
+    for fold in folds:
+        one_fold(args, features, feature_sets, fold)
+    if all((args.output_root / fold / "completed.json").exists() for fold in FOLDS):
+        summarize(args.output_root)
 
 
 if __name__ == "__main__":

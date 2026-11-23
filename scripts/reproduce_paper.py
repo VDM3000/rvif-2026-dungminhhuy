@@ -39,22 +39,22 @@ def main():
 
     if args.stage in ("prepare", "all") and not (cache / "manifest.json").is_file():
         run("EMS_repo/data_process/split_fix.py", "--dataset_dir", "EMS")
-        run("-m", "reviewer_experiments.prepare_cache", "--output", cache)
+        run("-m", "bamf.preprocess", "--output", cache)
     if args.stage in ("seeds", "all"):
         seeds_output = output / "seeds"
         if seeds_output.exists():
             parser.error(f"Seed output already exists: {seeds_output}. Choose a fresh --output.")
-        run("-m", "reviewer_experiments.seed_alpha", "--baseline", args.seed_snapshot.resolve() if args.seed_snapshot else baseline,
+        run("-m", "bamf.seed_analysis", "--baseline", args.seed_snapshot.resolve() if args.seed_snapshot else baseline,
             "--output", seeds_output)
     if args.stage in ("early-31", "all"):
-        run("-m", "reviewer_experiments.early_31", "--head-type", "linear", "--cache-dir", cache,
+        run("-m", "bamf.eval_pretrained_fusion", "--cache-dir", cache,
             "--checkpoint-root", args.pretrained.resolve(), *behavior,
             "--historical-msnet", baseline / "msnet_prob_val.csv",
             "--historical-late", baseline / "best_fusion_prob_val.csv",
             "--output-root", output / "early_31")
     if args.stage == "msnet-211" or (args.stage == "all" and args.msnet_211 is None):
         for fold in FOLDS:
-            run("-m", "reviewer_experiments.train_211", "--cache-dir", cache, *behavior,
+            run("-m", "bamf.train_msnet", "--cache-dir", cache, *behavior,
                 "--output-root", msnet, "--eval-fold", fold, "--ems-checkpoint-selection", "--require-cuda")
     if args.stage in ("late-211", "early-211", "all"):
         cache_sha = None
@@ -74,17 +74,17 @@ def main():
                 parser.error(f"Fixation cache differs from the MSNet training cache in {completion}.")
     if args.stage in ("late-211", "all"):
         for fold in FOLDS:
-            if not (output / "fixed" / fold / "completed.json").is_file():
-                run("-m", "reviewer_experiments.run_211", "--msnet-root", msnet, *behavior,
-                    "--output-root", output, "--variant", "fixed", "--eval-fold", fold)
+            if not (output / "late_fusion" / fold / "completed.json").is_file():
+                run("-m", "bamf.late_fusion", "--msnet-root", msnet, *behavior,
+                    "--output-root", output / "late_fusion", "--eval-fold", fold)
     if args.stage in ("early-211", "all"):
         early = output / "early_211"
         for fold in FOLDS:
-            run("-m", "reviewer_experiments.early_211", "--head-type", "linear", "--cache-dir", cache,
+            run("-m", "bamf.early_fusion", "--cache-dir", cache,
                 *behavior, "--late-root", msnet, "--output-root", early, "--eval-fold", fold)
         summary = output / "summary_211"
         if not summary.exists():
-            run("-m", "reviewer_experiments.summarize_211", "--workbook", "EMS/Train_Valid.xlsx",
+            run("-m", "bamf.evaluate", "--workbook", "EMS/Train_Valid.xlsx",
                 "--late-root", msnet, "--early-root", early, "--output", summary)
 
 

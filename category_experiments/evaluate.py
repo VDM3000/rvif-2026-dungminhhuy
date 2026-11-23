@@ -20,7 +20,7 @@ from common import (
     compute_foldwise_metrics,
     write_json,
 )
-from run_behavior_fusion import (
+from behavior import (
     META_COLUMNS,
     aggregate_category_features,
     behavior_cv,
@@ -70,7 +70,7 @@ def run_category(category: str, image_count: int) -> tuple[dict, pd.DataFrame]:
     write_json(category_output / "feature_columns.json", columns)
 
     # Refit exactly one behavioral model per fold using the frozen paper configuration.
-    behavior = behavior_cv(subject, columns, CLASSIFIER)
+    behavior = behavior_cv(subject, columns)
     msnet = load_msnet_predictions(category)
     behavior_merge = behavior[["subject_int", "set_name", "label", "behavior_prob"]].rename(
         columns={"label": "behavior_label"}

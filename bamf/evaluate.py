@@ -9,8 +9,8 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from .protocol_211 import FOLDS, fold_roles, load_subject_map, otsu_threshold
-from .train_211 import fixed_threshold_metrics
+from .splits import FOLDS, fold_roles, load_subject_map, otsu_threshold
+from .train_msnet import fixed_threshold_metrics
 
 
 METRICS = ("acc", "sensitivity", "specificity", "auc", "precision", "f1_score")

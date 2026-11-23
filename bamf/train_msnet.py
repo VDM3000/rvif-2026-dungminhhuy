@@ -22,8 +22,8 @@ from timm.scheduler import create_scheduler_v2
 from torch import nn
 from torch.utils.data import DataLoader, Dataset
 
-from .protocol_211 import alpha_candidates, fold_roles, otsu_threshold, select_alpha, validate_subject_map
-from .seed_alpha import sha256
+from .splits import alpha_candidates, fold_roles, otsu_threshold, select_alpha, validate_subject_map
+from .seed_analysis import sha256
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]

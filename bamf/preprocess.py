@@ -11,8 +11,8 @@ from types import SimpleNamespace
 
 import numpy as np
 
-from .protocol_211 import load_subject_map
-from .seed_alpha import sha256
+from .splits import load_subject_map
+from .seed_analysis import sha256
 
 
 SHAPE = (160, 1056, 100, 14)
