@@ -1,0 +1,2 @@
+evaluation_fold,train_folds,alpha_fold,feature_set,model,inner_auc,alpha_msnet,threshold,acc,sensitivity,specificity,auc,precision,f1_score,tn,fp,fn,tp
+Set_1,"('Set_0', 'Set_3')",Set_2,duration_pupil,hgb,0.8787878787878789,0.05,0.4117647058823529,0.675,0.8125,0.5833333333333334,0.78125,0.5652173913043478,0.6666666666666666,14,10,3,13

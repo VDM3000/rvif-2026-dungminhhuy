@@ -1,0 +1,28 @@
+{
+  "result": {
+    "evaluation_fold": "Set_0",
+    "training_folds": [
+      "Set_1",
+      "Set_2",
+      "Set_3"
+    ],
+    "epoch_selection_fold": "Set_1",
+    "selected_epoch": 19,
+    "selection_auc": 0.8645833333333334,
+    "msnet_parity_max_error": 5.960464477539063e-08,
+    "threshold": 0.49411764705882355,
+    "acc": 0.85,
+    "sensitivity": 0.9090909090909091,
+    "specificity": 0.7777777777777778,
+    "auc": 0.9772727272727273,
+    "precision": 0.8333333333333334,
+    "f1_score": 0.8695652173913043,
+    "tn": 14,
+    "fp": 4,
+    "fn": 2,
+    "tp": 20
+  },
+  "manifest_sha256": "42cf71dd52f987974ee568047bde441b51ef58b151c31458de43398c84377c67",
+  "head_sha256": "9a6b3b50cd7763cf2ad58f683dfcc433a54d342cd3ed0ecf3a64c7b05f08ca15",
+  "completed_at": "2026-11-23T13:20:27.791524+07:00"
+}

@@ -77,7 +77,9 @@ def save_state(path: Path, value: dict) -> None:
 
 def train_msnet(cache, metadata, train_indices, folder: Path, epochs: int, batch_size: int, seed: int, device):
     seed_everything(seed)
-    model = Model(in_c=1056, stimulus_count=100).to(device)
+    # The upstream EMS Model defaults to 100 stimuli. This standard 2/1/1 run
+    # therefore works with the pinned submodule without the variable-count override.
+    model = Model(in_c=1056).to(device)
     optimizer = create_optimizer_v2(model, opt="adamw", lr=5e-4, weight_decay=0.05, eps=1e-8)
     scheduler, _ = create_scheduler_v2(optimizer, sched="cosine", num_epochs=epochs, min_lr=1e-5,
                                        warmup_lr=1e-6, warmup_epochs=5, cooldown_epochs=10)

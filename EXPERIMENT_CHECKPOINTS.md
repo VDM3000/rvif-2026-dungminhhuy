@@ -1,6 +1,6 @@
 # Checkpoint cho bốn đề xuất thí nghiệm
 
-**Nguồn yêu cầu và quy tắc kỹ thuật:** [spec.md](spec.md). **Cập nhật:** 2026-11-22. File này là nơi theo dõi trạng thái; không suy ra đã chạy thí nghiệm từ việc có CSV lịch sử.
+**Nguồn yêu cầu và quy tắc kỹ thuật:** [spec.md](spec.md). **Cập nhật:** 2026-11-23. File này là nơi theo dõi trạng thái; không suy ra đã chạy thí nghiệm từ việc có CSV lịch sử.
 
 ## Quy tắc tiếp tục phiên
 
@@ -23,10 +23,14 @@
 | L-01 | DONE | Đã khóa bốn lượt 80/40/40, MSNet 50 epoch cố định, batch 4, α và ngưỡng chỉ từ fold giữa. Cache 0,88 GiB khớp xác suất MSNet gốc trên 40 người Set_0; pilot một epoch chạy được trên GPU local. | X-01 |
 | L-02 | DONE | Bốn MSNet huấn luyện từ đầu trên 80 train, 50 epoch cố định; chọn α/ngưỡng ở 40 người giữa; chấm 40 người cuối. Prediction/checkpoint/manifest tại `outputs/reviewer_experiments/late_211_2026-11-22/`. | L-01 |
 | L-03 | DONE | `summary_211_2026-11-22/`: kiểm tra 4×40 ID duy nhất; MSNet mới AUC 77,80%, Late Fusion 84,92%, so với lịch sử có nhãn protocol khác. | L-02 |
+| M-01 | DONE | Bổ sung biến thể 2/1/1 chọn trong 21 cấu hình bằng hai lượt 40/40 chỉ trong 80 người train; lưu đủ 42 hàng inner-fold và ranking 21 cấu hình mỗi lượt. Mục 9 `spec.md`, mã `reviewer_experiments/select_211.py`. | L-02 |
+| M-02 | DONE | Fit cấu hình thắng trên 80 người, chọn α/ngưỡng trên 40 người giữa và chấm 40 người cuối; đủ 160 ID đánh giá, output riêng `outputs/reviewer_experiments/selected_211_final_2026-11-23/`. | M-01 |
+| M-03 | DONE | Đối chiếu biến thể chọn mô hình (AUC 84,38%) với bản P+S/HGB cố định (84,92%); ghi rõ hai quy trình trong `paper/main.tex`, biên dịch PDF 7 trang. | M-02, L-03 |
 | F-01 | DONE | Bốn file `msnet_embeddings.csv` mỗi file 160×56, ghép với 173 P+S thành 229 chiều; ID/shape và giá trị hữu hạn đã kiểm tra. | X-01 |
 | F-02 | DONE | Head 229→32→1, ReLU/dropout 0,2, AdamW 0,001; chọn epoch bằng 40 người giữa; encoder MSNet giữ cố định, cùng split Late Fusion. | F-01, L-01 |
 | F-03 | DONE | Early Fusion bốn lượt có head/preprocessing/checkpoint/prediction theo người; AUC 83,84% trên cùng 160 người, so với Late Fusion 84,92%. | F-02, L-03 |
-| R-01 | DONE | Đã đối chiếu bảng/hình với output, cập nhật bài báo và tô xanh mọi phần thêm/sửa trong `main.tex`; PDF 7 trang đã biên dịch và kiểm tra màu. | S-03, A-02, L-03, F-03 |
+| F-04 | DONE | Early Fusion 3/1 theo Mục 8 `spec.md`: checkpoint MSNet pretrained đúng Set, parity 40 xác suất gốc, chọn epoch trong 120 train, fit head trên 120, chấm 40 validation mỗi Set. Output chính thức `outputs/reviewer_experiments/early_31_final_2026-11-23/`; bản `early_31_2026-11-23/` là trung gian, không trích số. | X-01, F-02 |
+| R-01 | DONE | Đã đối chiếu bảng/hình với output, cập nhật bài báo và tô xanh mọi phần thêm/sửa trong `main.tex`; PDF 7 trang đã biên dịch và kiểm tra màu. | S-03, A-02, L-03, F-03, F-04 |
 
 ## Quyết định phải ghi trước khi chạy
 
@@ -75,3 +79,17 @@
 - Bài chính ở [paper/main.pdf](paper/main.pdf), 7 trang. Đã thu gọn Bảng III và VI, cập nhật diễn giải kết quả 2/1/1 và tô xanh phần chữ sửa. Đã kiểm tra bố cục cả bảy trang và xác nhận log lượt biên dịch cuối hết cảnh báo tràn dòng.
 - [Phụ lục Hình S1](paper/supplement/alpha_211.pdf) có bốn đường AUC trên fold chọn α cùng các trọng số được chọn. Tách hình thành file gửi kèm để giữ số trang bài chính.
 - [Hồ sơ tái lập bổ sung](outputs/reviewer_experiments/audit_2026-11-22_mac/reproducibility_record.json) ghi nguồn cấu hình, kết quả và hash của bốn MSNet checkpoint cùng bốn Early Fusion head. Hồ sơ lập sau khi chạy. Seed thực tế của Early Fusion và môi trường của lần huấn luyện 2/1/1 gốc còn thiếu xác nhận.
+
+## Bổ sung đối chiếu 3/1 — 2026-11-23
+
+- **F-04 DONE:** mã `reviewer_experiments/early_31.py`, notebook mỏng `notebooks/early_fusion_31.ipynb`, output chính thức `outputs/reviewer_experiments/early_31_final_2026-11-23/`. Bản chạy phát triển `early_31_2026-11-23/` không dùng để trích số. Mỗi Set có `manifest.json` ghi trước chạy, checkpoint pretrained, bản embedding 160×56, head 229→32→1, preprocessing, lịch sử chọn epoch, dự đoán 40 người validation và metric.
+- Bốn checkpoint MSNet pretrained cho xác suất trên validation khớp notebook lịch sử, sai khác tối đa 1,19×10⁻⁷. Epoch head chọn trong 120 người train lần lượt là 19, 8, 1, 16; sau đó fit head mới trên đủ 120 người. Đã tái tạo xác suất từ head và preprocessing đã lưu; tổng 160 ID validation duy nhất. AUC từng Set: 97,73%; 90,10%; 94,00%; 88,89%. Mean AUC Early 3/1 = 92,68%, accuracy 82,50%; MSNet lịch sử 89,72% / 83,13%, Late lịch sử 95,03% / 84,38%.
+- Notebook mới chỉ gọi cùng script Python và hiển thị CSV, không chứa bản sao thuật toán; đã chạy toàn bộ cell bằng kernel `.venv` với exit 0. Kết quả 3/1 cùng bốn validation folds lịch sử nhưng là phát triển nội bộ; cấu hình BAMF lịch sử đã được chọn trên bốn fold này. Ngưỡng Otsu của 3/1 lấy từ score validation không dùng nhãn như notebook cũ, khác 2/1/1.
+- Bản thảo `paper/main.tex` đã thêm hàng Early Fusion 3/1 vào Bảng III và mô tả quy trình bằng màu xanh; PDF mới biên dịch 7 trang. Đã đồng bộ `main.tex` và `main.pdf` sang `../2026_RVIF_HuyMinhDung_Final/`, xác nhận hash từng cặp trùng nhau. Không tự động push vì yêu cầu lần này là giải thích và sửa thiếu sót, chưa yêu cầu push.
+- **Giới hạn còn lại của S-01–S-03:** ba seed chỉ đổi `random_state` của HGB với cùng MSNet pretrained và cùng fold; dự đoán/metric giống hệt, nên phương sai bằng 0 chỉ mô tả ba lần chạy này. Chưa có thí nghiệm huấn luyện lại toàn bộ MSNet với ba seed và chưa có khoảng tin cậy cho hiệu quả tổng thể. Không diễn giải S-03 là đã giải quyết đầy đủ ý GVHD về độ ổn định.
+
+## Bổ sung chọn mô hình 2/1/1 — 2026-11-23
+
+- **M-01–M-03 DONE:** `reviewer_experiments/select_211.py` tái dùng bốn checkpoint MSNet đã huấn luyện trên đúng 80 người từ `late_211_2026-11-22/Set_i/`; không huấn luyện lại MSNet. Mỗi lượt so 7 nhóm × LR/RF/HGB trong hai vòng inner 40/40, xếp theo AUC, F1, accuracy; fit lại cấu hình thắng trên 80 người, chọn α/ngưỡng từ 40 người giữa, đánh giá 40 người cuối. Unit test thay nhãn ngoài 80 người chứng minh ranking không đổi.
+- Cấu hình thắng cho Set_0–3: `duration_pupil/rf`, `duration_pupil/hgb`, `all_behavior/rf`, `pupil_scanpath/rf`; α tương ứng 0, 0,05, 0,20, 0,05. AUC từng lượt 82,32%, 78,13%, 94,50%, 82,58%; macro AUC 84,38%, accuracy 75,63%. Bản cố định P+S/HGB vẫn có AUC 84,92%. Không dùng kết quả cao hơn để chọn giữa hai giao thức sau khi đã nhìn fold đánh giá.
+- Bằng chứng: mỗi Set có `manifest.json` trước chạy, `inner_fold_metrics.csv` 42 hàng, `configuration_ranking.csv` 21 hàng, dự đoán 40 người chọn α và 40 người đánh giá, metric riêng. `all_evaluation_predictions.csv` có đúng 160 ID duy nhất. Hash mã trong bốn manifest khớp file hiện tại. Đây là kiểm tra nội bộ trên EMS, không phải hidden test; việc chọn 21 cấu hình trên chỉ 80 người vẫn có thể biến động cao.

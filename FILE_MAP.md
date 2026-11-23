@@ -24,6 +24,9 @@ Phạm vi: `dav/rvif-2026-dungminhhuy/`. Bản đồ này được đối chiế
 | `EXPERIMENT_CHECKPOINTS.md` | Tiến độ, quyết định và bàn giao cho bốn thí nghiệm trong `spec.md`. |
 | `paper/` | Snapshot `main.tex`, tài liệu và hình nguồn, cùng `main.pdf` đã biên dịch để nhóm review. |
 | `outputs/reviewer_experiments/` | Baseline, ba seed, α, Late/Early Fusion 2/1/1, dự đoán theo người, checkpoint và bảng tổng hợp. |
+| `outputs/reviewer_experiments/early_31_final_2026-11-23/` | Early Fusion 3/1 theo validation lịch sử, kết quả từng fold và đối chiếu MSNet/Late Fusion; khác 2/1/1. |
+| `outputs/reviewer_experiments/selected_211_final_2026-11-23/` | Biến thể 2/1/1 chọn 21 cấu hình ML trong 80 người train trước khi chọn α; ranking và dự đoán từng fold. |
+| `notebooks/early_fusion_31.ipynb` | Notebook chạy trực tiếp script Early Fusion 3/1 và hiển thị bảng kết quả. |
 | `outputs/improve_behavioral/` | Kết quả notebook lịch sử, bao gồm dự đoán theo người và các bảng/phân tích hành vi. |
 | `requirements-windows.txt` | Gói Python bổ sung cho môi trường Windows. |
 | `setup_windows.ps1` | Tạo `.venv`, cài gói, đăng ký kernel và kiểm tra đầu vào. |

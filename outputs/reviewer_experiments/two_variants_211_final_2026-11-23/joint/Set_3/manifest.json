@@ -1,0 +1,20 @@
+{
+  "created_before_run": "2026-11-23T15:41:59.039031+07:00",
+  "variant": "joint",
+  "eval_fold": "Set_3",
+  "training_folds": [
+    "Set_1",
+    "Set_2"
+  ],
+  "selection_fold": "Set_0",
+  "seed": 42,
+  "rule": "fit 21 configurations on 80; select feature/model/alpha jointly on middle 40",
+  "tie_break": "AUC, F1, accuracy rounded to 12 decimals descending; feature, model, alpha ascending",
+  "source_sha256": "ffec6360f26ddf4a8061c3a062855f83abd753e4d6ef931428da402c575701e1",
+  "behavior_sha256": "dafbddc8aa04c7c481f7654b1b4b8c946d7d2b9342f262fbfdc09efb04be857b",
+  "feature_sets_sha256": "3e7a5c37e28bf81ebfae0bd1aad218e48ab958ce44b08e30e72d4892a9b5935a",
+  "msnet_checkpoint_sha256": "d34b355859b70cb016ac86cff2e3ebc2bef38fefd6f164fe6908cfde1c23b056",
+  "msnet_config_sha256": "77cc97358d59069480bce53c5ba761c0a205c99044ee21165670dd7f9c2941c1",
+  "python": "3.12.10",
+  "repo_commit": "a3993223900310b412ad8a937e2aba02ab9a9efc"
+}

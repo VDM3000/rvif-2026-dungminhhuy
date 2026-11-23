@@ -1,4 +1,8 @@
 # Local Python environment and generated state
+/local_archives/
+/msnet_reproduction/EMS_repo/
+/msnet_reproduction/data/
+/msnet_reproduction/results/
 .venv/
 __pycache__/
 *.py[cod]
@@ -100,6 +104,10 @@ outputs/balanced_stimulus_experiment/results_60/*
 !outputs/improve_behavioral/**
 !outputs/reviewer_experiments/
 !outputs/reviewer_experiments/**
+# Local development runs; the verified named runs remain visible to Git.
+/outputs/reviewer_experiments/early_31_2026-11-23/
+/outputs/reviewer_experiments/selected_211_2026-11-23/
+/outputs/reviewer_experiments/two_variants_211_2026-11-23/
 # OS/editor noise
 .DS_Store
 Thumbs.db

@@ -1,14 +1,1 @@
-numpy==1.26.4
-pandas==2.2.3
-scipy==1.14.1
-scikit-learn==1.5.2
-openpyxl==3.1.5
-opencv-python==4.10.0.84
-matplotlib==3.9.2
-tqdm==4.67.1
-timm==0.9.16
-umap-learn==0.5.7
-lime==0.2.0.1
-ipykernel==6.29.5
-jupyterlab==4.3.4
-nbformat==5.10.4
+-r requirements.txt

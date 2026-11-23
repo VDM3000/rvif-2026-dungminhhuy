@@ -5,6 +5,7 @@ Repository này chứa mã và kết quả cho ba luồng nghiên cứu. `paper/
 1. **Kết quả BAMF chính:** `notebooks/windows.ipynb` tạo lại dự đoán MSNet pretrained trên bốn fold, trích đặc trưng hành vi, đánh giá 21 cấu hình và ghép hai điểm dự đoán. `notebooks/original_kaggle.ipynb` là bản cho Kaggle. Bảng tổng hợp lịch sử nằm ở `improve_behavioral_final_results/`.
 2. **So sánh bốn nhóm ảnh:** mã trong `category_experiments/`. Kết quả với cấu hình cố định ở `outputs/fixed_original_protocol/`; kết quả khám phá tối ưu riêng từng nhóm ở `outputs/category_experiments/summary/`. Xem [giao thức cố định](docs/experiments/FIXED_PROTOCOL.md) và [hướng dẫn nhóm ảnh](docs/experiments/CATEGORY_EXPERIMENTS.md).
 3. **Thử 20/40/60 ảnh cân bằng:** mã trong `balanced_stimulus_experiment/`, kết quả trong `outputs/balanced_stimulus_experiment/`. Xem [hướng dẫn số lượng ảnh](docs/experiments/BALANCED_STIMULUS_EXPERIMENT.md).
+4. **Early Fusion trên cùng validation 3/1 của bài báo:** `reviewer_experiments/early_31.py` dùng checkpoint pretrained từng fold, chọn epoch trong 120 người train và đánh giá 40 người còn lại. Có thể chạy script trực tiếp hoặc notebook `notebooks/early_fusion_31.ipynb`; kết quả chính thức ở `outputs/reviewer_experiments/early_31_final_2026-11-23/`. Kết quả này tách khỏi Early Fusion 2/1/1.
 
 Danh mục chức năng từng file và thư mục: [FILE_MAP.md](FILE_MAP.md). [Đặc tả bốn thí nghiệm theo góp ý GVHD](spec.md) và [checkpoint triển khai](EXPERIMENT_CHECKPOINTS.md) theo dõi công việc mới. Yêu cầu nguyên bản và kế hoạch cũ được lưu trong `docs/history/` để đối chiếu, không phải lệnh chạy hiện tại.
 
@@ -39,6 +40,22 @@ Sau khi chuẩn bị môi trường, có thể dùng các lệnh riêng:
 ```
 
 Chúng chạy các nghiên cứu nhóm/số lượng ảnh, không thay thế cho việc chạy `notebooks/windows.ipynb`. Kết quả `outputs/category_experiments/summary/` đã tối ưu riêng theo nhóm ảnh, nên phải phân biệt với `outputs/fixed_original_protocol/` khi viết bài.
+
+Early Fusion 3/1 có thể chạy bằng `notebooks/early_fusion_31.ipynb` trong VS Code/Jupyter hoặc cùng lệnh Python mà notebook gọi:
+
+```powershell
+.\.venv\Scripts\python.exe -m reviewer_experiments.early_31 --eval-fold all
+```
+
+Script đối chiếu xác suất MSNet pretrained với kết quả notebook cũ trước khi huấn luyện head. File `comparison_with_historical.csv` trong output 3/1 so MSNet, Late Fusion và Early Fusion trên cùng bốn fold; đây là validation nội bộ, không phải hidden test.
+
+Biến thể 2/1/1 có chọn lại trong 21 cấu hình ML (khác lượt cố định P+S/HGB) chạy bằng:
+
+```powershell
+.\.venv\Scripts\python.exe -m reviewer_experiments.select_211 --eval-fold all
+```
+
+Nó dùng bốn checkpoint MSNet 2/1/1 đã huấn luyện trong `outputs/reviewer_experiments/late_211_2026-11-22/` và ghi kết quả vào `outputs/reviewer_experiments/selected_211_final_2026-11-23/`. Muốn chạy lại từ đầu, dùng `--output-root` trỏ đến thư mục mới để không ghi đè bằng chứng cũ.
 
 ## Lưu dữ liệu và kết quả
 

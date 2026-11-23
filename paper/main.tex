@@ -48,7 +48,7 @@ Email: hai.tranthithanh1@hust.edu.vn
 \begin{abstract}
 Eye movements provide objective behavioral measurements that may support schizophrenia screening. Existing deep learning methods learn stimulus-aware representations from fixation sequences but may overlook complementary behavioral cues, resulting in incomplete representations of eye-movement behavior. In this paper, we propose BAMF, a \textbf{B}ehavior-\textbf{A}ware \textbf{M}ultimodal \textbf{F}usion framework for schizophrenia recognition. BAMF adopts the Mean Shift Network (MSNet) that integrates mean-shift clustering with convolutional feature extraction to derive cluster-center representations. In addition, we incorporate explicit behavioral descriptors such as fixation duration, pupil response, and scanpath features extracted from raw eye-movement records. Beyond multimodal fusion, we systematically analyze the discriminative stimulus categories and behavioral feature groups. We evaluate the four stimulus categories (Natural, Social, Synthetic, and Manipulated) independently to identify which visual content provides the strongest separation between schizophrenia and healthy controls. We further compare individual and combined behavioral feature sets to quantify their contribution to recognition performance. On the public Eye Movement in Schizophrenia (EMS) dataset under the official four-fold protocol, the proposed fusion improves the mean Area Under the Receiver Operating Characteristic Curve (AUC) from 89.72\% to 95.03\%, while also increasing accuracy, sensitivity, and F1-score over MSNet alone. The stimulus-set analysis shows that a reduced subset can retain most diagnostic performance, while diverse stimulus categories provide the best discrimination between schizophrenia and healthy controls.
 
-\textcolor{blue}{In a separate 2/1/1 fold evaluation with newly trained MSNet models, mean AUC is 77.80\% for MSNet, 84.92\% for late fusion, and 83.84\% for feature-level fusion; these estimates use a different training and selection protocol from the 95.03\% historical result.}
+\textcolor{blue}{In separate 2/1/1 folds with newly trained MSNet models, mean AUC is 77.80\% for MSNet, 84.92\% for fixed $P+S$/HGB late fusion, 89.08\% when behavioral configuration and weight are jointly selected on the middle fold, and 83.84\% for feature-level fusion. These protocols differ from the historical 95.03\% result.}
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -170,6 +170,8 @@ Missing behavioral values are imputed using medians estimated only from the trai
 
 The seven behavioral groups are combined with the three classifiers, producing 21 configurations. The MSNet weight is searched on $\alpha\in\{0,0.05,\ldots,1\}$. Area Under the Receiver Operating Characteristic Curve (AUC) is the primary selection criterion, followed by F1-score and accuracy. We report subject-level accuracy (Acc.), sensitivity (Sen.), specificity (Spe.), AUC, precision (Pre.), and F1-score. Following the official EMS code, threshold-dependent metrics use a per-fold Otsu threshold; AUC is threshold independent. All tabulated metrics are unweighted means of the four fold-level values and are expressed as percentages. Best results are bold; second-best results are underlined.
 
+\textcolor{blue}{For a feature-level comparison on the same historical 3/1 folds, each fold's pretrained MSNet supplies a 56-dimensional vector. We concatenate it with 173 pupil--scanpath features and train a new 229-input MLP head on the other 120 subjects. One of those three training folds selects the head epoch; we then refit the head on all 120 subjects and score the held-out 40. Behavioral preprocessing is fitted on the corresponding head-training subjects. As in the historical evaluation, threshold-dependent metrics use Otsu on the validation scores without their labels.}
+
 \subsection{Evaluation of proposed model}
 Table~\ref{tab:ml_results} reports all 21 behavioral configurations. Duration--pupil LR gives the strongest behavioral-only AUC, while pupil--scanpath HGB is selected for fusion because its errors complement those of MSNet more effectively. Thus, the strongest individual classifier need not produce the strongest fused model.
 
@@ -211,7 +213,7 @@ HGB & $D+P+S$ & 233 & 76.25 & 84.43 & 67.22 & \underline{87.10} & 77.57 \\
 \end{table}
 
 % \subsection{Main Results}
-Table~\ref{tab:main_results} compares the reproduced MSNet, the strongest behavioral-only configuration, and the proposed fusion. \textcolor{blue}{The historical fusion uses an MSNet weight of $\alpha=0.8$.} Fusion attains the highest AUC, accuracy, sensitivity, and F1-score. \textcolor{blue}{Relative to MSNet, fusion raises mean AUC by 5.30 percentage points, reduces false negatives, and lowers specificity by 3.47 points. The accuracy gain corresponds to two additional correct decisions among 160 subjects. The 21 feature--classifier configurations and fusion weights were compared on the same four development folds, so the reported performance of the selected configuration may be optimistic.}
+\textcolor{blue}{Table~\ref{tab:main_results} compares the reproduced MSNet, the strongest behavioral-only configuration, feature-level fusion, and the proposed late fusion.} \textcolor{blue}{The historical late fusion uses an MSNet weight of $\alpha=0.8$.} Fusion attains the highest AUC, accuracy, sensitivity, and F1-score. \textcolor{blue}{Feature-level fusion reaches 92.68\% mean AUC, above MSNet's 89.72\% but below late fusion's 95.03\%; its 82.50\% accuracy is below MSNet's 83.13\%. Relative to MSNet, late fusion raises mean AUC by 5.30 percentage points, reduces false negatives, and lowers specificity by 3.47 points. The accuracy gain corresponds to two additional correct decisions among 160 subjects. The 21 feature--classifier configurations and fusion weights were compared on the same four development folds, so the reported performance of the selected configuration may be optimistic. The feature-level comparison is also internal development validation.}
 
 
 % We verified specificity as $\mathrm{TN}/(\mathrm{TN}+\mathrm{FP})$ within each fold before macro-averaging; the result therefore reflects a genuine sensitivity--specificity trade-off rather than a transcription error.
@@ -227,8 +229,9 @@ Table~\ref{tab:main_results} compares the reproduced MSNet, the strongest behavi
 Method & Configuration & Acc. & Sen. & Spe. & AUC &  F1 \\
 \midrule
 MSNet & Pretrained & \underline{83.13} & 80.51 & \textbf{87.08} & 89.72 & \underline{82.44} \\
-Behavioral & $D+P$, LR & 82.50 & \underline{82.24} & 82.57 & \underline{90.42} &  82.09 \\
-BAMF (ours) & $P+S$, HGB & \textbf{84.38} & \textbf{84.63} & \underline{83.61} & \textbf{95.03} &  \textbf{84.05} \\
+Behavioral & $D+P$, LR & 82.50 & \underline{82.24} & 82.57 & \textcolor{blue}{90.42} &  82.09 \\
+\textcolor{blue}{Early fusion} & \textcolor{blue}{229-d MLP} & \textcolor{blue}{82.50} & \textcolor{blue}{80.80} & \textcolor{blue}{\underline{83.96}} & \textcolor{blue}{\underline{92.68}} & \textcolor{blue}{81.71} \\
+BAMF (ours) & $P+S$, HGB & \textbf{84.38} & \textbf{84.63} & \textcolor{blue}{83.61} & \textbf{95.03} &  \textbf{84.05} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -287,7 +290,7 @@ Figure~\ref{fig:alpha_curve} analyzes the selected pupil--scanpath HGB branch ov
 \label{tab:separated_validation}
 \centering
 \footnotesize
-\setlength{\tabcolsep}{3.2pt}
+\setlength{\tabcolsep}{2.8pt}
 \begin{tabular}{lrrrrrr}
 \toprule
 Method & Acc. & Sen. & Spe. & AUC & AUC SD & F1 \\
@@ -295,11 +298,12 @@ Method & Acc. & Sen. & Spe. & AUC & AUC SD & F1 \\
 MSNet (80 train) & 71.25 & 70.63 & 71.60 & 77.80 & 7.05 & 70.57 \\
 Late fusion & 76.25 & 76.76 & 74.93 & 84.92 & 3.84 & 75.46 \\
 Feature-level fusion & 74.38 & 73.10 & 73.40 & 83.84 & 8.77 & 72.27 \\
+Late fusion (joint) & 78.75 & 73.30 & 82.22 & 89.08 & 7.29 & 76.21 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\textcolor{blue}{In Table~\ref{tab:separated_validation}, late fusion gains 7.12 percentage points in mean AUC over MSNet trained on the same 80 subjects per rotation. Late fusion leads feature-level fusion by 1.09 points on these folds. At the thresholds set on the tuning folds, late fusion classifies 122 of 160 subjects correctly, compared with 114 for MSNet. It corrects 26 MSNet errors and changes 18 correct MSNet decisions into errors. The selected MSNet weights are 0, 0.10, 0.05, and 0.35 for Set\_0 through Set\_3. Supplementary Figure~S1 shows the tuning AUC curves and the selected weights. The 84.92\% and 95.03\% results come from protocols with different training-set sizes (80 and 120 subjects per fold, respectively), checkpoint rules, and weight selection. The 2/1/1 results reflect internal validation on EMS of the feature--classifier configuration previously selected on this dataset.}
+\textcolor{blue}{With fixed $P+S$/HGB, late fusion improves mean AUC over the 80-subject MSNet by 7.12 points; its four weights are 0, 0.10, 0.05, and 0.35 (Supplementary Fig.~S1). In the additional joint variant, all 21 behavioral configurations are fitted on the same 80 training subjects. We rank each configuration combined with each of 21 weights on the middle 40 subjects by AUC, then F1 and accuracy; the final 40 subjects are used only for evaluation. The four winners are $P+S$/HGB, $D+P+S$/RF, $D+P$/LR, and $D+P$/LR, with weights 0, 0.10, 0, and 0.35. Joint selection yields 89.08\% mean AUC. Searching 441 choices on 40 subjects may make the chosen settings unstable, although the evaluation fold is untouched. Neither 2/1/1 variant is directly comparable with the historical 120-training-subject result of 95.03\%.}
 
 \subsection{Stimulus-Set Design Experiments}
 \label{sec:stimulus_design}

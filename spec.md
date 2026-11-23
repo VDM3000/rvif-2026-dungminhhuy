@@ -76,3 +76,21 @@ Thực hiện bốn đề xuất của GVHD: chạy thêm seed, so sánh Early F
 5. Chỉ sau khi kiểm tra output mới cập nhật `main.tex`, hình và bảng. Mọi đoạn thêm hoặc sửa so với `main.tex` có SHA-256 lưu trong manifest baseline phải được tô màu xanh trong LaTeX; kiểm tra màu trên PDF. Ba seed không được mô tả là CI; 2/1/1 vẫn là internal validation trên EMS, không phải external test.
 
 Những lựa chọn phải chốt trước khi chạy được ghi trong checkpoint. Không tự động sửa bài báo hoặc công bố con số mới chỉ dựa trên đặc tả này.
+
+## 8. Bổ sung theo yêu cầu đối chiếu Early Fusion 3/1 — 2026-11-23
+
+**Mục đích:** bổ sung Early Fusion trên đúng bốn validation folds của kết quả lịch sử (120 người train, 40 người validation), bên cạnh kết quả 2/1/1 đã có. Đây là phép so sánh phát triển nội bộ với MSNet/BAMF trong bài, không phải xác nhận độc lập mới.
+
+- Dùng checkpoint MSNet pretrained `model_parameters/Set_i/best_model.pt` tương ứng với fold validation `Set_i`, không dùng checkpoint 2/1/1. Từ cache đầu vào cùng 100 ảnh, lấy 56 chiều trước head; bắt buộc kiểm tra xác suất của head gốc trên 40 người validation khớp `outputs/improve_behavioral/msnet_prob_val.csv` trước khi huấn luyện head mới.
+- Dùng đúng 173 cột Pupil + Scanpath của notebook, ghép theo `subject_int`. Head Early Fusion giữ kiến trúc đã chốt 229→32→1. Head gốc 56→1 không thể nhận 229 chiều; không đổi mã EMS gốc. Với mỗi outer fold, chọn số epoch bằng 80 người train và 40 người chọn epoch nằm trong ba fold ngoài validation; sau đó fit lại imputer/scaler và head mới trên toàn bộ 120 người trong đúng số epoch đã chọn. Fold validation không quyết định epoch hay preprocessing.
+- Chấm 40 người validation trên cùng `Set_i` với kết quả BAMF cũ. Để khớp quy trình metric lịch sử, tính Otsu từ phân bố score validation không dùng nhãn; ghi rõ đây là quy tắc 3/1 lịch sử và khác ngưỡng chọn trên fold giữa của 2/1/1. AUC không phụ thuộc ngưỡng.
+- Lưu manifest **trước** mỗi run, hash checkpoint/đặc trưng/cache, bản 56 chiều, lịch sử chọn epoch, preprocessing và head cuối, prediction theo người, metric theo fold, bảng so sánh với MSNet 89,72% và BAMF 95,03% có nhãn protocol. Tạo notebook mỏng để chạy cùng script từ VS Code/Jupyter; script là nguồn mã duy nhất.
+- Giữ kết quả 3/1 chính thức riêng tại `outputs/reviewer_experiments/early_31_final_2026-11-23/`. Thư mục `early_31_2026-11-23/` là bản chạy phát triển trước khi bổ sung kiểm tra head đã lưu; không trích số từ bản này. Không ghi đè kết quả `early_211_2026-11-22/` hoặc các bảng lịch sử. Không coi so sánh này là nested CV của 21 cấu hình; BAMF lịch sử đã được chọn bằng chính bốn fold.
+
+## 9. Bổ sung chọn mô hình ML trong 2/1/1 — 2026-11-23
+
+**Lý do:** lượt 2/1/1 tại Mục 6 chỉ kiểm tra α khi cố định P+S/HGB. Nó chưa kiểm tra bước chọn trong 21 cặp nhóm đặc trưng và bộ phân loại. Giữ nguyên lượt cũ để đối chiếu; chạy thêm lượt có chọn mô hình trong output riêng.
+
+- Với mỗi fold đánh giá: giữ 80 người huấn luyện, 40 người chọn α, 40 người đánh giá như Mục 6. Chia 80 người huấn luyện thành hai fold 40 người; luân phiên huấn luyện trên một fold, chấm fold kia cho đủ 7 nhóm đặc trưng × LR/RF/HGB = 21 cấu hình. Chọn một cấu hình theo AUC trung bình, rồi F1 và accuracy; nếu vẫn hòa, dùng tên cấu hình để quyết định cố định. Mọi bước làm sạch dữ liệu được fit trong fold huấn luyện tương ứng.
+- Fit lại đúng cấu hình thắng trên toàn bộ 80 người. Dùng checkpoint MSNet 2/1/1 đã huấn luyện từ đúng 80 người đó; dự đoán hai fold 40 người còn lại. Chỉ 40 người chọn α quyết định α và ngưỡng Otsu. Khóa cấu hình, α, ngưỡng trước khi chấm 40 người đánh giá. Không sử dụng nhãn của fold đánh giá để chọn bất kỳ phần nào.
+- Lặp đủ bốn lượt, lưu ranking 21 cấu hình và kết quả hai inner fold mỗi lượt, manifest nguồn dữ liệu/mã/checkpoint, cấu hình/α được chọn, dự đoán từng người và metric. Tổng hợp 160 ID đánh giá duy nhất tại `outputs/reviewer_experiments/selected_211_final_2026-11-23/`. So sánh riêng với phiên bản cố định P+S/HGB; hiệu suất có thể giảm và không phải bằng chứng lỗi của phép chia.

@@ -1,0 +1,2 @@
+evaluation_fold,train_folds,alpha_fold,feature_set,model,inner_auc,alpha_msnet,threshold,acc,sensitivity,specificity,auc,precision,f1_score,tn,fp,fn,tp
+Set_3,"('Set_1', 'Set_2')",Set_0,pupil_scanpath,rf,0.8930729166666667,0.05,0.4549019607843137,0.8,0.6818181818181818,0.9444444444444444,0.8257575757575757,0.9375,0.7894736842105263,17,1,7,15

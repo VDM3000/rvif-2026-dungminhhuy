@@ -1,0 +1,2 @@
+evaluation_fold,training_folds,epoch_selection_fold,selected_epoch,selection_auc,msnet_parity_max_error,threshold,acc,sensitivity,specificity,auc,precision,f1_score,tn,fp,fn,tp
+Set_3,"('Set_0', 'Set_1', 'Set_2')",Set_0,16,0.9772727272727273,5.960464477539063e-08,0.4980392156862745,0.825,0.7727272727272727,0.8888888888888888,0.8888888888888888,0.8947368421052632,0.8292682926829268,16,2,5,17
