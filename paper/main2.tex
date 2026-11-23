@@ -286,18 +286,18 @@ Figure~\ref{fig:alpha_curve} analyzes the selected pupil--scanpath HGB branch ov
 
 \begin{table}[t]
 \color{blue}
-\caption{\textcolor{blue}{Separated 2/1/1 validation with MSNet checkpoints selected on the tuning fold (\%). AUC SD is the sample standard deviation across the four evaluation folds.}}
+\caption{\textcolor{blue}{Separated 2/1/1 validation with MSNet checkpoints selected on the tuning fold (\%).}}
 \label{tab:separated_validation}
 \centering
 \footnotesize
 \setlength{\tabcolsep}{2.8pt}
-\begin{tabular}{lrrrrrr}
+\begin{tabular}{lrrrrr}
 \toprule
-Method & Acc. & Sen. & Spe. & AUC & AUC SD & F1 \\
+Method & Acc. & Sen. & Spe. & AUC & F1 \\
 \midrule
-MSNet (80 train) & 68.13 & 69.01 & 68.47 & 78.10 & 6.10 & 66.93 \\
-Late fusion & 76.25 & 78.21 & 73.68 & 84.69 & 1.44 & 76.22 \\
-Early fusion & 70.63 & 65.99 & 74.38 & 83.93 & 3.70 & 68.13 \\
+MSNet (80 train) & 68.13 & 69.01 & 68.47 & 78.10 & 66.93 \\
+Late fusion & 76.25 & 78.21 & 73.68 & 84.69 & 76.22 \\
+Early fusion & 70.63 & 65.99 & 74.38 & 83.93 & 68.13 \\
 \bottomrule
 \end{tabular}
 \end{table}
