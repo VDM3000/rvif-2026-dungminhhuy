@@ -18,7 +18,7 @@ REPO_DIR = PROJECT_ROOT / "EMS_repo"
 FEATURE_DICT_PATH = PROJECT_ROOT / "feature_dict_RINet.npy"
 EXPERIMENT_ROOT = PROJECT_ROOT / "outputs" / "category_experiments"
 CACHE_ROOT = PROJECT_ROOT / "work" / "category_experiments" / "cache"
-FULL_RESULTS_DIR = PROJECT_ROOT / "improve_behavioral_final_results"
+FULL_RESULTS_DIR = PROJECT_ROOT / "outputs" / "improve_behavioral"
 FOLDS = ("Set_0", "Set_1", "Set_2", "Set_3")
 CATEGORY_ORDER = (
     "manipulated",

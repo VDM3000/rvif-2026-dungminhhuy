@@ -1,1 +1,0 @@
-This curve uses the four historical EMS validation folds, not an external test. AUC is nonnegative by definition; a negative delta_auc_vs_msnet indicates fusion is worse than MSNet at that alpha/fold. Three fixed seeds measure run-to-run variation only, not a 95% confidence interval.

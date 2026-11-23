@@ -1,5 +1,0 @@
-case_type,subject_id,set_name,class_name,label,num_valid_images,msnet_prob,msnet_threshold,msnet_pred,msnet_correct,fused_prob,fusion_threshold,fusion_pred,fusion_correct,fusion_status,fusion_margin
-subject_216_incomplete_records,216,Set_0,SZ,1,63,0.572243332862854,0.4235294117647059,1,True,0.6566332774877794,0.4352941176470588,1,True,Correct,0.22133915984072067
-msnet_wrong_fusion_correct,021,Set_1,HC,0,100,0.3429401814937591,0.3411764705882353,1,False,0.2823298081735532,0.4784313725490196,0,True,Correct,0.1961015643754664
-fusion_wrong_high_confidence,013,Set_1,HC,0,98,0.8297643661499023,0.3411764705882353,1,False,0.8633677713242697,0.4784313725490196,1,False,Wrong,0.3849363987752501
-fusion_correct_high_confidence,248,Set_2,SZ,1,100,0.9377351403236388,0.2705882352941176,1,True,0.9477971436470204,0.4156862745098039,1,True,Correct,0.5321108691372165

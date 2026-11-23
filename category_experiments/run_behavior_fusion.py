@@ -33,7 +33,7 @@ def aggregate_category_features(category: str) -> tuple[pd.DataFrame, dict[str, 
     source = FULL_RESULTS_DIR / "stim_behavior_features.csv"
     if not source.exists():
         raise FileNotFoundError(
-            f"Missing stimulus feature table: {source}. It is part of improve_behavioral_final_results."
+            f"Missing stimulus feature table: {source}. Run the baseline notebook first."
         )
     stimulus = pd.read_csv(source)
     image_stems = stimulus["image"].astype(str).map(lambda value: Path(value).stem)

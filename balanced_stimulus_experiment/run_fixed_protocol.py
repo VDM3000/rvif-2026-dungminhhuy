@@ -50,7 +50,7 @@ def behavior_cv(subject: pd.DataFrame, columns: list[str]) -> pd.DataFrame:
     return pd.concat(predictions, ignore_index=True).sort_values(["set_name", "subject_int"])
 
 
-BASELINE_METRICS = {
+METRICS = {
     "stimulus_count": 100,
     "images_per_category": "unbalanced",
     "acc": 0.84375,
@@ -64,7 +64,7 @@ METRICS = ("acc", "sensitivity", "specificity", "precision", "f1_score", "auc")
 
 
 def aggregate_selected_features(stimulus_count: int) -> tuple[pd.DataFrame, list[str]]:
-    source = PROJECT_ROOT / "improve_behavioral_final_results" / "stim_behavior_features.csv"
+    source = PROJECT_ROOT / "outputs" / "improve_behavioral" / "stim_behavior_features.csv"
     stimulus = pd.read_csv(source)
     selected = set(load_manifest(stimulus_count)["image_stem"])
     image_stems = stimulus["image"].astype(str).map(lambda value: Path(value).stem)
@@ -131,7 +131,7 @@ def add_decisions(predictions: pd.DataFrame, metrics: pd.DataFrame) -> pd.DataFr
     return predictions
 
 
-def run_condition(stimulus_count: int) -> tuple[dict, pd.DataFrame, pd.DataFrame]:
+def run_condition(stimulus_count: int, baseline_auc: float) -> tuple[dict, pd.DataFrame, pd.DataFrame]:
     output = result_dir(stimulus_count)
     subject, features = aggregate_selected_features(stimulus_count)
     behavior = behavior_cv(subject, features)
@@ -177,7 +177,7 @@ def run_condition(stimulus_count: int) -> tuple[dict, pd.DataFrame, pd.DataFrame
         **{metric: float(average[metric]) for metric in METRICS},
         "auc_std": float(fold_only["auc"].std(ddof=1)),
         "auc_range": float(fold_only["auc"].max() - fold_only["auc"].min()),
-        "delta_auc_vs_baseline": float(average["auc"] - BASELINE_METRICS["auc"]),
+        "delta_auc_vs_baseline": float(average["auc"] - baseline_auc),
     }
     return summary, all_metrics, decisions[columns]
 
@@ -247,15 +247,20 @@ def write_summary(results: pd.DataFrame, fold_metrics: pd.DataFrame) -> None:
 
 
 def main():
+    comparison = pd.read_csv(PROJECT_ROOT / "outputs/improve_behavioral/final_comparison_metrics.csv")
+    baseline_row = comparison.loc[(comparison["method"] == "MSNet + Behavioral Fusion") & (comparison["feature_set"] == "pupil_scanpath") & (comparison["model"] == "hgb")]
+    if len(baseline_row) != 1:
+        raise ValueError("Expected one Pupil + Scanpath / HGB fusion baseline")
+    baseline_metrics = {metric: float(baseline_row.iloc[0][metric]) for metric in METRICS}
     summaries, metric_frames, prediction_frames = [], [], []
     for count in STIMULUS_COUNTS:
         print(f"[{count}] fitting fixed Pupil+Scanpath/HGB and alpha=0.8")
-        summary, metrics, predictions = run_condition(count)
+        summary, metrics, predictions = run_condition(count, baseline_metrics["auc"])
         summaries.append(summary)
         metric_frames.append(metrics)
         prediction_frames.append(predictions)
     baseline = {
-        **BASELINE_METRICS,
+        "stimulus_count": 100, "images_per_category": "unbalanced", **baseline_metrics,
         "auc_std": float("nan"), "auc_range": float("nan"), "delta_auc_vs_baseline": 0.0,
     }
     results = pd.DataFrame([*summaries, baseline])
@@ -266,14 +271,14 @@ def main():
     all_predictions.to_csv(summary_dir / "subject_predictions.csv", index=False)
     write_summary(results, all_metrics)
     write_json(OUTPUT_ROOT / "protocol.json", {
-        "source": "docs/history/message2.txt", "seed": 42, "stimulus_counts": list(STIMULUS_COUNTS),
+        "seed": 42, "stimulus_counts": list(STIMULUS_COUNTS),
         "nested": True, "subjects": 160, "folds": list(FOLDS),
         "feature_set": "Pupil + Scanpath", "classifier": "HistGradientBoosting",
         "hgb_config": {"max_iter": 300, "learning_rate": 0.03, "max_leaf_nodes": 15,
                        "l2_regularization": 0.01, "random_state": 42},
         "alpha_msnet": ALPHA_MSNET, "behavior_weight": BEHAVIOR_WEIGHT,
         "thresholding": "OpenCV Otsu independently within each validation fold",
-        "baseline_auc": BASELINE_METRICS["auc"],
+        "baseline_auc": baseline_metrics["auc"],
     })
     print(results.sort_values("stimulus_count").to_string(index=False))
 

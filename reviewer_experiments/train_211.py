@@ -22,7 +22,7 @@ from timm.scheduler import create_scheduler_v2
 from torch import nn
 from torch.utils.data import DataLoader, Dataset
 
-from .protocol_211 import alpha_candidates, fold_roles, select_alpha, validate_subject_map
+from .protocol_211 import alpha_candidates, fold_roles, otsu_threshold, select_alpha, validate_subject_map
 from .seed_alpha import sha256
 
 
@@ -75,9 +75,12 @@ def save_state(path: Path, value: dict) -> None:
     temp.replace(path)
 
 
-def train_msnet(cache, metadata, train_indices, folder: Path, epochs: int, batch_size: int, seed: int, device):
+def train_msnet(cache, metadata, train_indices, folder: Path, epochs: int, batch_size: int, seed: int, device,
+                selection_indices=None):
     seed_everything(seed)
-    model = Model(in_c=1056, stimulus_count=100).to(device)
+    # The upstream EMS Model defaults to 100 stimuli. This standard 2/1/1 run
+    # therefore works with the pinned submodule without the variable-count override.
+    model = Model(in_c=1056).to(device)
     optimizer = create_optimizer_v2(model, opt="adamw", lr=5e-4, weight_decay=0.05, eps=1e-8)
     scheduler, _ = create_scheduler_v2(optimizer, sched="cosine", num_epochs=epochs, min_lr=1e-5,
                                        warmup_lr=1e-6, warmup_epochs=5, cooldown_epochs=10)
@@ -104,7 +107,12 @@ def train_msnet(cache, metadata, train_indices, folder: Path, epochs: int, batch
         print(f"resuming epoch {start_epoch + 1}/{epochs}", flush=True)
     history_path = folder / "training_history.csv"
     history = pd.read_csv(history_path).to_dict("records") if history_path.exists() else []
+    history = history[:start_epoch]
+    best_path = folder / "best_model.pt"
+    best_score = max((row["selection_score"] for row in history), default=0.0) if selection_indices is not None else 0.0
     for epoch in range(start_epoch, epochs):
+        if selection_indices is not None and epoch:
+            model.load_state_dict(torch.load(best_path, map_location=device, weights_only=True))
         generator = torch.Generator().manual_seed(seed + epoch)
         loader = DataLoader(CachedSubjects(cache, metadata, train_indices), batch_size=batch_size,
                             shuffle=True, num_workers=0, generator=generator)
@@ -120,9 +128,21 @@ def train_msnet(cache, metadata, train_indices, folder: Path, epochs: int, batch
             loss.backward()
             optimizer.step()
             losses.append(float(loss.item()))
-        scheduler.step(epoch)
         history.append({"epoch": epoch + 1, "train_bce": float(np.mean(losses)),
                         "lr": float(optimizer.param_groups[0]["lr"])})
+        if selection_indices is not None:
+            selection = msnet_scores(model, cache, metadata, selection_indices, device,
+                                     alpha=min(1.0, global_steps / 50.0))
+            metrics = fixed_threshold_metrics(selection.label, selection.msnet_prob,
+                                              otsu_threshold(selection.msnet_prob))
+            score = metrics["auc"] + metrics["acc"] * len(selection) / (len(selection) + 1e-8)
+            history[-1].update(selection_auc=metrics["auc"], selection_accuracy=metrics["acc"],
+                               selection_score=score)
+            if score > best_score:
+                best_score = score
+                save_state(best_path, model.state_dict())
+        scheduler.step(epoch)
+        history[-1]["lr"] = float(optimizer.param_groups[0]["lr"])
         pd.DataFrame(history).to_csv(history_path, index=False)
         save_state(state_path, {"model": model.state_dict(), "optimizer": optimizer.state_dict(),
                                 "scheduler": scheduler.state_dict(), "next_epoch": epoch + 1,
@@ -130,17 +150,19 @@ def train_msnet(cache, metadata, train_indices, folder: Path, epochs: int, batch
                                 "numpy_rng": np.random.get_state(), "python_rng": random.getstate(),
                                 "cuda_rng": torch.cuda.get_rng_state_all() if torch.cuda.is_available() else None})
         print(f"epoch={epoch + 1}/{epochs} train_bce={history[-1]['train_bce']:.6f}", flush=True)
+    if selection_indices is not None:
+        model.load_state_dict(torch.load(best_path, map_location=device, weights_only=True))
     save_state(final_path, model.state_dict())
     return model, final_path
 
 
 @torch.inference_mode()
-def msnet_scores(model, cache, metadata, indices, device) -> pd.DataFrame:
+def msnet_scores(model, cache, metadata, indices, device, alpha=1.0) -> pd.DataFrame:
     model.eval()
     loader = DataLoader(CachedSubjects(cache, metadata, indices), batch_size=1, shuffle=False, num_workers=0)
     rows = []
     for features, labels, subjects in loader:
-        score = float(model(features.to(device), alpha=1.0).item())
+        score = float(model(features.to(device), alpha=alpha).item())
         rows.append({"subject_int": int(subjects.item()), "label": int(labels.item()), "msnet_prob": score})
     return pd.DataFrame(rows)
 
@@ -153,9 +175,16 @@ def main() -> None:
     parser.add_argument("--output-root", type=Path, required=True)
     parser.add_argument("--eval-fold", choices=[f"Set_{i}" for i in range(4)], required=True)
     parser.add_argument("--epochs", type=int, default=50)
-    parser.add_argument("--batch-size", type=int, default=4)
+    parser.add_argument("--batch-size", type=int)
+    parser.add_argument("--ems-checkpoint-selection", action="store_true",
+                        help="Use EMS batch size 8 by default and select/reload checkpoints on the middle fold")
+    parser.add_argument("--require-cuda", action="store_true")
     parser.add_argument("--seed", type=int, default=42)
     args = parser.parse_args()
+    if args.require_cuda and not torch.cuda.is_available():
+        parser.error("CUDA is required for this run")
+    if args.batch_size is None:
+        args.batch_size = 8 if args.ems_checkpoint_selection else 4
     train_folds, alpha_fold, evaluation_fold = fold_roles(args.eval_fold)
     folder = args.output_root / evaluation_fold
     folder.mkdir(parents=True, exist_ok=True)
@@ -163,6 +192,10 @@ def main() -> None:
               "epochs": args.epochs, "batch_size": args.batch_size, "seed": args.seed,
               "cache_sha256": sha256(args.cache_dir / "features_100.npy"),
               "behavior_sha256": sha256(args.behavior_features), "feature_sets_sha256": sha256(args.feature_sets)}
+    if args.ems_checkpoint_selection:
+        config.update(checkpoint_rule="middle-fold Otsu accuracy + AUC; reload best before each next epoch",
+                      metadata_sha256=sha256(args.cache_dir / "subjects.csv"),
+                      train_source_sha256=sha256(Path(__file__)), torch_version=str(torch.__version__))
     config_path = folder / "run_config.json"
     if config_path.exists() and json.loads(config_path.read_text(encoding="utf-8")) != config:
         raise RuntimeError("Existing run_config.json differs; choose a new output-root")
@@ -190,7 +223,8 @@ def main() -> None:
     if (len(train_indices), len(alpha_indices), len(eval_indices)) != (80, 40, 40):
         raise ValueError("Expected split sizes 80/40/40")
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model, checkpoint = train_msnet(cache, metadata, train_indices, folder, args.epochs, args.batch_size, args.seed, device)
+    model, checkpoint = train_msnet(cache, metadata, train_indices, folder, args.epochs, args.batch_size,
+                                    args.seed, device, alpha_indices if args.ems_checkpoint_selection else None)
     model_alpha = msnet_scores(model, cache, metadata, alpha_indices, device)
     model_eval = msnet_scores(model, cache, metadata, eval_indices, device)
     behavior_model = Pipeline([

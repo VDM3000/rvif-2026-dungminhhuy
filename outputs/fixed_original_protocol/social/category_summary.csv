@@ -1,2 +1,0 @@
-stimulus_set,category,image_count,feature_set,classifier,alpha_msnet,behavior_weight,acc,sensitivity,specificity,precision,f1_score,auc,auc_std_across_folds,auc_range_across_folds
-Social Scenes,social,22,Pupil + Scanpath,HistGradientBoosting,0.8,0.2,0.79375,0.8181818181818182,0.7680555555555556,0.7736413043478261,0.7927790490719552,0.8887192234848484,0.0830713224262902,0.19120896464646475

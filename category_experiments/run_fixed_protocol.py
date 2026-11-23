@@ -167,19 +167,14 @@ def write_report(results: pd.DataFrame, winners: pd.DataFrame, path: Path) -> No
             f"{row['f1_score']:.4f} | {row['auc']:.4f} |"
         )
     lines = [
-        "# Fixed original protocol results",
-        "",
-        "Cấu hình được giữ cố định cho mọi category: MSNet + Pupil/Scanpath + HGB, "
-        "`p_fusion = 0.8*p_msnet + 0.2*p_behavior`.",
+        "# Stimulus category results",
         "",
         *table_lines,
         "",
-        f"- AUC cao nhất: {auc_winner['stimulus_set']} ({auc_winner['auc']:.4f}).",
-        f"- Sensitivity cao nhất (nhận SZ): {sz_winner['stimulus_set']} ({sz_winner['sensitivity']:.4f}).",
-        f"- Specificity cao nhất (nhận HC): {hc_winner['stimulus_set']} ({hc_winner['specificity']:.4f}).",
-        f"- AUC ổn định nhất qua fold: {stable['stimulus_set']} (SD={stable['auc_std_across_folds']:.4f}).",
-        "",
-        "Các kết luận chỉ áp dụng cho EMS, 160 subjects và four-fold validation trong cấu hình trên.",
+        f"- Highest AUC: {auc_winner['stimulus_set']} ({auc_winner['auc']:.4f}).",
+        f"- Highest sensitivity: {sz_winner['stimulus_set']} ({sz_winner['sensitivity']:.4f}).",
+        f"- Highest specificity: {hc_winner['stimulus_set']} ({hc_winner['specificity']:.4f}).",
+        f"- Lowest fold AUC SD: {stable['stimulus_set']} ({stable['auc_std_across_folds']:.4f}).",
     ]
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
@@ -247,7 +242,6 @@ def main() -> None:
     write_report(ordered, winners, summary_dir / "RESULTS_FIXED_PROTOCOL.md")
     make_plot(ordered, summary_dir / "fixed_protocol_metrics.png")
     write_json(OUTPUT_ROOT / "protocol.json", {
-        "source": "docs/history/message.txt",
         "subjects": 160,
         "folds": list(FOLDS),
         "feature_set": "Pupil + Scanpath",

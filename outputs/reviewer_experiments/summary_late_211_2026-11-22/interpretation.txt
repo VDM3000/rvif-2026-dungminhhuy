@@ -1,1 +1,0 @@
-The 2/1/1 estimates use 80 training, 40 tuning, and 40 evaluation subjects per fold. Historical 95.03% BAMF and 89.72% MSNet used a different selected four-fold protocol and must not be treated as directly comparable independent test estimates. No labeled EMS hidden test or external validation is available.

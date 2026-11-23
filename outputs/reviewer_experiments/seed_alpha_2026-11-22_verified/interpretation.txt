@@ -1,1 +1,0 @@
-Historical validation only; not an external test. All three seeds have identical subject predictions: True. Negative fold-level AUC deltas: 13/84; by fold: {'Set_0': 4, 'Set_1': 7, 'Set_2': 0, 'Set_3': 2}. Negative mean deltas: 0/21. AUC is nonnegative by definition; three seeds do not provide a 95% confidence interval.

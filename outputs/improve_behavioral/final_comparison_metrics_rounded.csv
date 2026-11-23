@@ -1,4 +1,0 @@
-method,feature_set,model,alpha_msnet,behavior_weight,acc,sensitivity,specificity,auc,precision,f1_score,delta_acc_vs_baseline,delta_auc_vs_baseline,delta_f1_vs_baseline
-MSNet baseline,RINet fixation features,official pretrained MSNet,1.0,0.0,0.83125,0.805114,0.870833,0.897217,0.857516,0.824385,0.0,0.0,0.0
-Behavior-only,duration_pupil,logreg,0.0,1.0,0.825,0.822443,0.825694,0.904153,0.826144,0.820931,-0.00625,0.006937,-0.003454
-MSNet + Behavioral Fusion,pupil_scanpath,hgb,0.8,0.2,0.84375,0.846307,0.836111,0.950253,0.840322,0.840532,0.0125,0.053037,0.016147

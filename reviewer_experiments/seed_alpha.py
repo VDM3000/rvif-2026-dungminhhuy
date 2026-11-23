@@ -162,16 +162,17 @@ def main() -> None:
     parser.add_argument("--baseline", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
-    baseline = args.baseline / "improve_behavioral"
+    baseline = args.baseline
+    if (baseline / "improve_behavioral").is_dir():
+        baseline = baseline / "improve_behavioral"
     features = pd.read_csv(baseline / "subject_behavior_features.csv")
     msnet = pd.read_csv(baseline / "msnet_prob_val.csv")
     columns = json.loads((baseline / "feature_sets_clean.json").read_text(encoding="utf-8"))["pupil_scanpath"]
     baseline_manifest = args.baseline / "manifest.json"
-    if not baseline_manifest.is_file():
-        raise FileNotFoundError(baseline_manifest)
     source_hashes = {name: sha256(baseline / name) for name in
                      ("subject_behavior_features.csv", "msnet_prob_val.csv", "feature_sets_clean.json")}
-    source_hashes["baseline_manifest.json"] = sha256(baseline_manifest)
+    if baseline_manifest.is_file():
+        source_hashes["baseline_manifest.json"] = sha256(baseline_manifest)
     source_hashes["seed_alpha.py"] = sha256(Path(__file__))
     repo_commit = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
     args.output.mkdir(parents=True, exist_ok=False)

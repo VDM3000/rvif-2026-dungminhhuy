@@ -1,2 +1,0 @@
-stimulus_set,category,image_count,feature_set,classifier,alpha_msnet,behavior_weight,acc,sensitivity,specificity,precision,f1_score,auc,auc_std_across_folds,auc_range_across_folds
-Natural Scenes,natural,31,Pupil + Scanpath,HistGradientBoosting,0.8,0.2,0.8125,0.8607954545454546,0.7465277777777778,0.7665064102564102,0.8087842839333022,0.9128843118686868,0.06927165229869661,0.15927083333333336

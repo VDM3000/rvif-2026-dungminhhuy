@@ -1,2 +1,0 @@
-stimulus_set,category,image_count,feature_set,classifier,alpha_msnet,behavior_weight,acc,sensitivity,specificity,precision,f1_score,auc,auc_std_across_folds,auc_range_across_folds
-Synthetic Images,synthetic,15,Pupil + Scanpath,HistGradientBoosting,0.8,0.2,0.725,0.7144886363636365,0.726388888888889,0.7192219679633867,0.7147018461932557,0.843443023989899,0.05234428844873383,0.1253945707070706
