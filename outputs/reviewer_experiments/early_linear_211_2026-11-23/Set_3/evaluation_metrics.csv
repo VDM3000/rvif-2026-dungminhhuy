@@ -1,0 +1,2 @@
+fold,alpha_fold,train_folds,best_epoch,calibration_auc,threshold,acc,sensitivity,specificity,auc,precision,f1_score,tn,fp,fn,tp
+Set_3,Set_0,"('Set_1', 'Set_2')",25,0.8661616161616161,0.45098039215686275,0.625,0.45454545454545453,0.8333333333333334,0.7979797979797979,0.7692307692307693,0.5714285714285714,15,3,12,10

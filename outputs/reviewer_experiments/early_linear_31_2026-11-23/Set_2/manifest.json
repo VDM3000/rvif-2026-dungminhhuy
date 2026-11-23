@@ -1,0 +1,31 @@
+{
+  "created_before_run": "2026-11-23T18:21:53.673288+07:00",
+  "protocol": "historical 3/1 development validation; 120 train, 40 validation",
+  "evaluation_fold": "Set_2",
+  "training_folds": [
+    "Set_0",
+    "Set_1",
+    "Set_3"
+  ],
+  "epoch_selection_fold": "Set_3",
+  "epoch_selection_train_folds": [
+    "Set_0",
+    "Set_1"
+  ],
+  "seed": 42,
+  "checkpoint_sha256": "a7460aed8d14b0bd15a81fee0b32c170edd32a404af9a628231b9823dfd20863",
+  "cache_sha256": "cbed89fa514ea8fa8601601f15c0fc1c387246808496a13627123eb010874973",
+  "behavior_sha256": "430eea4e7aa778cbad18cdd5e530f7f5ce3b40396d0c198a363c52fc83eb9a02",
+  "feature_sets_sha256": "8c3d229b9cb980d4945442b25587ec42765f24728475ac606110869ae1e535a0",
+  "historical_msnet_sha256": "ae94ac650c7f6ba77aef265fbff47f1909835e277623d5712427e665782f5dd9",
+  "source_sha256": "6ebec98448b3c2dc5f6e8a37f33674de5436c1aabf1fc16dea77b06e2363928e",
+  "repo_commit": "ecc1bcf5088362256bdf85c6d1ff06a6d3eaf336",
+  "python": "3.12.10",
+  "torch": "2.7.0+cu128",
+  "numpy": "1.26.4",
+  "sklearn": "1.5.2",
+  "head_type": "linear",
+  "head": "Linear(229,1)",
+  "epoch_rule": "80 inner train, 40 inner selection; best AUC, first tie, patience 10; refit on 120",
+  "threshold_rule": "Otsu from outer validation scores without labels, as in historical notebook"
+}

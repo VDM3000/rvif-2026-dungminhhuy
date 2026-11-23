@@ -1,0 +1,2 @@
+variant,eval_fold,selection_fold,training_folds,feature_set,model,alpha_msnet,selection_auc,threshold,acc,sensitivity,specificity,auc,precision,f1_score,tn,fp,fn,tp,msnet_auc
+joint,Set_0,Set_1,"('Set_2', 'Set_3')",pupil_scanpath,hgb,0.05,0.8932291666666666,0.4588235294117647,0.775,0.9090909090909091,0.6111111111111112,0.8434343434343434,0.7407407407407407,0.8163265306122449,11,7,2,20,0.8585858585858586

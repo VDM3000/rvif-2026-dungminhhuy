@@ -1,0 +1,31 @@
+{
+  "result": {
+    "fold": "Set_0",
+    "alpha_fold": "Set_1",
+    "train_folds": [
+      "Set_2",
+      "Set_3"
+    ],
+    "best_epoch": 6,
+    "calibration_auc": 0.8359375,
+    "threshold": 0.4588235294117647,
+    "acc": 0.725,
+    "sensitivity": 0.7727272727272727,
+    "specificity": 0.6666666666666666,
+    "auc": 0.8409090909090908,
+    "precision": 0.7391304347826086,
+    "f1_score": 0.7555555555555555,
+    "tn": 12,
+    "fp": 6,
+    "fn": 5,
+    "tp": 17
+  },
+  "msnet_checkpoint_sha256": "b476498e75993084547884da18fb781c7ce865f84e1da267c508909fc065a541",
+  "head_sha256": "5efe88c152dd4ff25405cc21da9f007b62457643815091c5cee20c79880a3c5d",
+  "behavior_sha256": "430eea4e7aa778cbad18cdd5e530f7f5ce3b40396d0c198a363c52fc83eb9a02",
+  "feature_sets_sha256": "8c3d229b9cb980d4945442b25587ec42765f24728475ac606110869ae1e535a0",
+  "head_type": "linear",
+  "architecture": "frozen MSNet encoder; 56+173=229; Linear(229,1)",
+  "optimizer": "AdamW lr=0.001; BCEWithLogitsLoss; max_epoch=100; calibration AUC patience=10",
+  "created_at": "2026-11-23T18:22:10.522003+07:00"
+}

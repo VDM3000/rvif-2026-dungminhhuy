@@ -44,7 +44,17 @@ def extract_embedding(model: nn.Module, features: torch.Tensor) -> torch.Tensor:
     return captured[0]
 
 
-def make_head() -> nn.Sequential:
+HEAD_DESCRIPTIONS = {
+    "mlp": "Linear(229,32), ReLU, Dropout(0.2), Linear(32,1)",
+    "linear": "Linear(229,1)",
+}
+
+
+def make_head(head_type="mlp") -> nn.Sequential:
+    if head_type == "linear":
+        return nn.Sequential(nn.Linear(229, 1))
+    if head_type != "mlp":
+        raise ValueError(f"Unknown head type: {head_type}")
     return nn.Sequential(nn.Linear(229, 32), nn.ReLU(), nn.Dropout(0.2), nn.Linear(32, 1))
 
 
@@ -61,9 +71,9 @@ def all_embeddings(model, cache, device) -> np.ndarray:
 
 
 def fit_head(x: np.ndarray, y: np.ndarray, train_idx: np.ndarray, calibration_idx: np.ndarray,
-             seed: int, device, output: Path) -> tuple[nn.Module, int, float]:
+             seed: int, device, output: Path, head_type="mlp") -> tuple[nn.Module, int, float]:
     seed_everything(seed)
-    head = make_head().to(device)
+    head = make_head(head_type).to(device)
     optimizer = torch.optim.AdamW(head.parameters(), lr=1e-3)
     loss_fn = nn.BCEWithLogitsLoss()
     x_device = torch.from_numpy(x).to(device)
@@ -119,6 +129,7 @@ def main() -> None:
     parser.add_argument("--output-root", type=Path, required=True)
     parser.add_argument("--eval-fold", choices=[f"Set_{i}" for i in range(4)], required=True)
     parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--head-type", choices=HEAD_DESCRIPTIONS, default="mlp")
     args = parser.parse_args()
     train_folds, alpha_fold, eval_fold = fold_roles(args.eval_fold)
     late_folder = args.late_root / eval_fold
@@ -133,6 +144,9 @@ def main() -> None:
     folder = args.output_root / eval_fold
     folder.mkdir(parents=True, exist_ok=True)
     if (folder / "completed.json").exists():
+        saved = json.loads((folder / "completed.json").read_text(encoding="utf-8"))
+        if saved.get("head_type", "mlp") != args.head_type or saved["msnet_checkpoint_sha256"] != sha256(checkpoint):
+            raise ValueError("Completed run used a different head or MSNet checkpoint")
         print(f"{eval_fold} already complete", flush=True)
         return
     metadata = pd.read_csv(args.cache_dir / "subjects.csv")
@@ -141,7 +155,7 @@ def main() -> None:
     if cache.shape != (160, 1056, 100, 14):
         raise ValueError(f"Wrong cache shape: {cache.shape}")
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = Model(in_c=1056, stimulus_count=100).to(device)
+    model = Model(in_c=1056).to(device)
     model.load_state_dict(torch.load(checkpoint, map_location=device, weights_only=True))
     embeddings = all_embeddings(model, cache, device)
     embedding_frame = pd.DataFrame(embeddings, columns=[f"msnet_feature_{i:02d}" for i in range(56)])
@@ -170,7 +184,7 @@ def main() -> None:
     joblib.dump({"imputer": imputer, "scaler": scaler, "behavior_columns": columns}, folder / "preprocessing.joblib")
     labels = metadata.label.to_numpy(dtype=int)
     head, best_epoch, calibration_auc = fit_head(combined, labels, train_idx, calibration_idx,
-                                                 args.seed, device, folder)
+                                                 args.seed, device, folder, args.head_type)
     calibration_scores = head_scores(head, combined, calibration_idx, device)
     threshold = otsu_threshold(calibration_scores)
     evaluation_scores = head_scores(head, combined, eval_idx, device)
@@ -191,7 +205,8 @@ def main() -> None:
     (folder / "completed.json").write_text(json.dumps({
         "result": result, "msnet_checkpoint_sha256": sha256(checkpoint), "head_sha256": sha256(folder / "head.pt"),
         "behavior_sha256": sha256(args.behavior_features), "feature_sets_sha256": sha256(args.feature_sets),
-        "architecture": "frozen MSNet encoder; 56+173=229; Linear(229,32), ReLU, Dropout(0.2), Linear(32,1)",
+        "head_type": args.head_type,
+        "architecture": f"frozen MSNet encoder; 56+173=229; {HEAD_DESCRIPTIONS[args.head_type]}",
         "optimizer": "AdamW lr=0.001; BCEWithLogitsLoss; max_epoch=100; calibration AUC patience=10",
         "created_at": datetime.now(ZoneInfo("Asia/Ho_Chi_Minh")).isoformat()}, indent=2), encoding="utf-8")
     print(f"{eval_fold}: eval AUC={result['auc']:.6f}, best_epoch={best_epoch}", flush=True)

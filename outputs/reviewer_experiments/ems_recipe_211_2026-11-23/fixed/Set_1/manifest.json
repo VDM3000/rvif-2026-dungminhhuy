@@ -1,0 +1,20 @@
+{
+  "created_before_run": "2026-11-23T17:55:49.101399+07:00",
+  "variant": "fixed",
+  "eval_fold": "Set_1",
+  "training_folds": [
+    "Set_0",
+    "Set_3"
+  ],
+  "selection_fold": "Set_2",
+  "seed": 42,
+  "rule": "fixed P+S/HGB; select alpha on middle fold",
+  "tie_break": "AUC, F1, accuracy rounded to 12 decimals descending; feature, model, alpha ascending",
+  "source_sha256": "ffec6360f26ddf4a8061c3a062855f83abd753e4d6ef931428da402c575701e1",
+  "behavior_sha256": "430eea4e7aa778cbad18cdd5e530f7f5ce3b40396d0c198a363c52fc83eb9a02",
+  "feature_sets_sha256": "8c3d229b9cb980d4945442b25587ec42765f24728475ac606110869ae1e535a0",
+  "msnet_checkpoint_sha256": "aab3ccb7df9db2d69b85a84b82a5d4f21504e58d7b51bff417a0ea441f063c2b",
+  "msnet_config_sha256": "939f3d1805c59ae7434e077b607361b45919539e3b4fb3724757d9a23f6b981b",
+  "python": "3.12.10",
+  "repo_commit": "ecc1bcf5088362256bdf85c6d1ff06a6d3eaf336"
+}

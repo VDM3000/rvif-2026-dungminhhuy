@@ -1,0 +1,43 @@
+{
+  "config": {
+    "eval_fold": "Set_3",
+    "alpha_fold": "Set_0",
+    "train_folds": [
+      "Set_1",
+      "Set_2"
+    ],
+    "epochs": 50,
+    "batch_size": 8,
+    "seed": 42,
+    "cache_sha256": "cbed89fa514ea8fa8601601f15c0fc1c387246808496a13627123eb010874973",
+    "behavior_sha256": "430eea4e7aa778cbad18cdd5e530f7f5ce3b40396d0c198a363c52fc83eb9a02",
+    "feature_sets_sha256": "8c3d229b9cb980d4945442b25587ec42765f24728475ac606110869ae1e535a0",
+    "checkpoint_rule": "middle-fold Otsu accuracy + AUC; reload best before each next epoch",
+    "metadata_sha256": "2d91a5c0b1d57754c1552ea72956002446629b8d6d140a50035c02fe83ab13a4",
+    "train_source_sha256": "486368fb23ac9f02a13fb4aae1f22a842041bd4c1e824a1901840e0c8272729c",
+    "torch_version": "2.7.0+cu128"
+  },
+  "result": {
+    "fold": "Set_3",
+    "alpha_fold": "Set_0",
+    "train_folds": [
+      "Set_1",
+      "Set_2"
+    ],
+    "alpha_msnet": 0.7,
+    "calibration_auc": 0.8737373737373738,
+    "threshold": 0.47843137254901963,
+    "acc": 0.8,
+    "sensitivity": 0.6818181818181818,
+    "specificity": 0.9444444444444444,
+    "auc": 0.8560606060606061,
+    "precision": 0.9375,
+    "f1_score": 0.7894736842105263,
+    "tn": 17,
+    "fp": 1,
+    "fn": 7,
+    "tp": 15
+  },
+  "checkpoint_sha256": "66248e24c37ba24ceac5869a910be144d73883dc0cb3d253f015af5cc2e99d4e",
+  "created_at": "2026-11-23T17:54:54.948019+07:00"
+}
